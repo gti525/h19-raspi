@@ -2,7 +2,7 @@
   <div class="home">
     <div class="jumbotron">
       <img alt="Vue logo" src="../assets/logo.png">
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <HelloWorld msg="Gestion de Salles"/>
     </div>
   </div>
 </template>
