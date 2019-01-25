@@ -7,25 +7,25 @@
       </div>
       <div class="side-panel right-panel">
         <div id="signUpFormContainer">
-          <h2>Sign Up</h2>
-          <h5>It's free and totally pointless</h5>
+          <h2>Inscription</h2>
+          <h5>Gratuit et ouvert à tous!</h5>
           <form id="signUpForm" action="/signup" method="post">
             <div class="form-data-row multiple-data">
-              <input type="text" name="firstName" placeholder="First Name"/>
-              <input type="text" name="lastName" placeholder="Last Name"/>
+              <input type="text" name="firstName" placeholder="Prénom"/>
+              <input type="text" name="lastName" placeholder="Nom de famille"/>
             </div>
             <div class="form-data-row">
-              <input type="text" name="company" placeholder="Company"/>
+              <input type="text" name="company" placeholder="Compagnie"/>
             </div>
             <div class="form-data-row">
-              <input type="text" name="email" placeholder="Email Address"/>
+              <input type="text" name="email" placeholder="Adresse courriel"/>
             </div>
             <div class="form-data-row">
-              <input type="password" name="password" placeholder="New Password"/>
+              <input type="password" name="password" placeholder="Nouveau mot de passe"/>
             </div>
             <div id="signUpBtnContainer">
-              <b-button type="submit" size="lg" id="signUpBtn">Sign Up</b-button>
-              <div>Already a member?&nbsp;<a href="login">Log In</a></div>
+              <b-button type="submit" size="lg" id="signUpBtn">Envoyer</b-button>
+              <div>Déjà membre?&nbsp;<a href="login">Se connecter</a></div>
             </div>
           </form>
         </div>
