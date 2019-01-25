@@ -25,7 +25,9 @@
             </div>
             <div id="signUpBtnContainer">
               <b-button type="submit" size="lg" id="signUpBtn">Envoyer</b-button>
-              <div>Déjà membre?&nbsp;<a href="login">Se connecter</a></div>
+              <div>Déjà membre?&nbsp;
+                <router-link to="/login">Se connecter</router-link>
+              </div>
             </div>
           </form>
         </div>
