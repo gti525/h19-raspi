@@ -78,6 +78,10 @@ function initListeners() {
     padding-right: 2rem;
   }
 
+  #signUpBtn + div {
+    vertical-align: middle;
+  }
+
   #signUpBtnContainer {
     text-align: left;
     padding-left: 0.5rem;
