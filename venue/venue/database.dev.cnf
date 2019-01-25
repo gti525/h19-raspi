@@ -1,6 +1,0 @@
-[client]
-host=db
-database=venue
-user=venue
-password=venue
-default-character-set=utf8
