@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Maison</router-link> |
-      <router-link to="/about">A Propos</router-link> |
+      <router-link to="/">Maison</router-link>|
+      <router-link to="/about">A Propos</router-link>|
       <router-link to="/sign-up">Inscription</router-link>
+      <router-link to="/venues">Salles</router-link>
+      <router-link to="/events">Spectacles</router-link>
     </div>
     <router-view/>
   </div>
@@ -30,8 +32,8 @@
   padding: 30px;
   box-sizing: border-box;
   height: 85px;
-  background-color: rgba(255,255,255,0.8);
-  box-shadow: 0px 0px 9px 9px rgba(0,0,0,0.5);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 0px 9px 9px rgba(0, 0, 0, 0.5);
 }
 
 #nav a {
