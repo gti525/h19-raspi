@@ -3,9 +3,9 @@
     <div id="nav">
       <router-link to="/">Maison</router-link>|
       <router-link to="/about">A Propos</router-link>|
-      <router-link to="/sign-up">Inscription</router-link>
-      <router-link to="/venues">Salles</router-link>
-      <router-link to="/events">Spectacles</router-link>
+      <router-link to="/sign-up">Inscription</router-link>|
+      <router-link to="/venues">Salles</router-link>|
+      <router-link to="/concerts">Spectacles</router-link>|
     </div>
     <router-view/>
   </div>
@@ -18,10 +18,14 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-image: url("~@/assets/login-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
 }
 
 #app.sign-up {
-  background-image: url("~@/assets/login-bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   height: 100vh;
