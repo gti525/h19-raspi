@@ -13,7 +13,7 @@
         <input v-model="newVenue.capacity" type="number" name="capacity">
       </div>
       <div class="control">
-        <b-button variant="primary">Soumettre</b-button>
+        <b-button variant="primary" @click="submit(newVenue)">Soumettre</b-button>
         <b-button variant="danger" @click="cancel()">Cancel</b-button>
       </div>
     </form>
@@ -24,11 +24,13 @@
 export default {
   name: "NewVenue",
   props: {
-    newVenue: Object
+    newVenue: Object,
+    ogVenue: Object
   },
   methods: {
     submit(form) {
       console.log(form);
+      this.$emit("cancelCreateEdit");
     },
     cancel() {
       this.$emit("cancelCreateEdit");
