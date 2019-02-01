@@ -1,13 +1,24 @@
 <template>
   <div>
     <h1>Page des spectacles/Concerts</h1>
+    <button v-if="!createEditConcert" class="btn btn-primary" @click="createConcert">Nouveau Concert</button>
+    <NewVenue :newConcert="newConcert" @cancelCreateEdit="cancelCreateEdit" />
+    <div class="col-md-6 mx-auto">
+      <ShowConcerts :concerts="concerts" />
+    </div>
   </div>
 </template>
 
 <script>
+import ShowConcerts from "@/components/concert/ShowConcerts.vue";
+import NewConcert from "@/components/concert/newConcert.vue";
+
 export default {
   name: "concert",
-  components: {},
+  components: {
+    NewConcert,
+    ShowConcerts
+  },
   data: () => {
     return {
       newConcert: {},
@@ -38,18 +49,35 @@ export default {
           name: "Ariana Grande Concert",
           date: new Date(2019, 6, 4, 8),
           description: "Ariana Grande de retour à Montréal bitches",
-          venue: 36
+          venue: this.venues[0]
         },
         {
           id: 10,
           name: "BlackPink In Your Area",
           date: new Date(2029, 8, 14, 8),
-          description: "Ariana Grande de retour à Montréal bitches",
-          venue: 36
+          description: "Du kpop à Montréal",
+          venue: this.venues[1]
         },
         {}
       ]
     };
+  },
+  methods: {
+    createConcert() {
+      this.createEditConcert = !this.createEditVenue;
+      this.newConcert = {
+        name: "",
+        date: new Date(),
+        description: "",
+        venue: this.venues[0]
+      }
+    },
+    cancelCreateEdit() {
+      this.createEditConcert = !this.createEditConcert;
+    },
+    editConcert(concert) {
+      this.newConcert = concert;
+    }
   }
 };
 </script>
