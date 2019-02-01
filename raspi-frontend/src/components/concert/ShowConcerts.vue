@@ -5,7 +5,6 @@
                 <p>{{concert.name}}</p>
                 <p>{{concert.date}}</p>
                 <p>{{concert.description}}</p>
-                <p>Lieu: {{concert.venue.name}}</p>
             </div>
         </div>
     </div>
