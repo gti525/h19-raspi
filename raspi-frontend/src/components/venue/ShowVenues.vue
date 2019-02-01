@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style scoped>
-.venue {
+.card {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
 }
