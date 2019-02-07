@@ -15,6 +15,7 @@ class Venue(models.Model):
 class Show(models.Model):
     name = models.CharField(max_length=100)
     venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField()
 
     def __str__(self):
         return f'{self.name} | {self.venue}'
@@ -27,5 +28,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f'Ticket {self.uuid} for {self.show}'
-
-
