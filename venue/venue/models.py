@@ -14,7 +14,12 @@ class Venue(models.Model):
 
 class Show(models.Model):
     name = models.CharField(max_length=100)
-    venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, null=True)
+    venue = models.ForeignKey(
+        Venue,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="shows",
+    )
     date = models.DateTimeField()
 
     def __str__(self):
