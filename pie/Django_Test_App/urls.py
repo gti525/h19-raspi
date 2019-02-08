@@ -1,4 +1,4 @@
-"""venue URL Configuration
+"""Django_Test_App URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -13,19 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.urls import path, re_path
 from django.contrib import admin
-from django.urls import path, include
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
+import Test_App.views as test_app
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path(r'admin/', admin.site.urls),
+    path(r'', test_app.AllTech.as_view()),
+    path(r'ticket/', test_app.AllTicket.as_view()),
+
+    re_path(r'(?P<pk>\d+)', test_app.TechView.as_view()),
+    re_path(r'(?P<pk>\d+)', test_app.TicketView.as_view()),
 ]
