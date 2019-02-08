@@ -3,6 +3,7 @@
     <div id="nav">
       <router-link to="/">Maison</router-link> |
       <router-link to="/about">A Propos</router-link> |
+      <router-link to="/stats">Stats</router-link> |
       <router-link to="/sign-up">Inscription</router-link>
     </div>
     <router-view/>
@@ -20,6 +21,14 @@
 
 #app.sign-up {
   background-image: url("~@/assets/login-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+}
+
+#app.stats {
+  background-image: url("~@/assets/stats-bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   height: 100vh;
