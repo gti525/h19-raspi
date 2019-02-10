@@ -4,6 +4,8 @@ import Home from "./views/Home.vue";
 import SignUp from "./views/SignUp.vue";
 import Venue from "./views/Venue.vue";
 import Concert from "./views/Concert.vue";
+import Stats from "./views/Stats.vue";
+import SignUp from "./views/SignUp.vue";
 
 Vue.use(Router);
 
@@ -28,6 +30,11 @@ export default new Router({
       path: "/concerts",
       name: "concerts",
       component: Concert
+    },
+    {
+      path: "/stats",
+      name: "stats",
+      component: Stats
     },
     {
       path: "/about",

@@ -6,6 +6,7 @@
       <router-link to="/">Inscription</router-link>|
       <router-link to="/venues">Salles</router-link>|
       <router-link to="/concerts">Spectacles</router-link>|
+      <router-link to="/stats">Stats</router-link>|
     </div>
     <router-view/>
   </div>
@@ -26,6 +27,14 @@
 }
 
 #app.sign-up {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+}
+
+#app.stats {
+  background-image: url("~@/assets/stats-bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   height: 100vh;
