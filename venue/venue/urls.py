@@ -49,9 +49,9 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('show/', views.ShowListCreateView.as_view(), name='show-list'),
-    path('show/<int:pk>', views.ShowDetailView.as_view(), name='show-detail'),
-    path('venue/', views.VenueListCreateView.as_view(), name='venue-list'),
-    path('venue/<int:pk>', views.VenueDetailView.as_view(), name='venue-detail'),
-
+    path('shows/', views.ShowListCreateView.as_view(), name='show-list'),
+    path('shows/<int:pk>', views.ShowDetailView.as_view(), name='show-detail'),
+    path('shows/<int:show_id>/tickets', views.TicketShowListView.as_view(), name='show-ticket-list'),
+    path('venues/', views.VenueListCreateView.as_view(), name='venue-list'),
+    path('venues/<int:pk>', views.VenueDetailView.as_view(), name='venue-detail'),
 ]

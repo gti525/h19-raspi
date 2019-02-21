@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import generics
 
 from .models import Show, Venue, Ticket
-from .serializer import ShowSerializer, VenueSerializer
+from .serializer import ShowSerializer, VenueSerializer, TicketSerializer
 
 
 class ShowDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -26,4 +26,12 @@ class VenueDetailView(generics.RetrieveUpdateDestroyAPIView):
 class VenueListCreateView(generics.ListCreateAPIView):
     queryset = Venue.objects.all()
     serializer_class = VenueSerializer
+
+
+class TicketShowListView(generics.ListAPIView):
+    serializer_class = TicketSerializer
+
+    def get_queryset(self):
+        show_id = self.kwargs['show_id']
+        return Ticket.objects.filter(show=show_id)
 

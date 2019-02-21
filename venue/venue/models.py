@@ -1,4 +1,5 @@
 import uuid
+import requests
 
 from django.db import models
 
@@ -33,3 +34,27 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f'Ticket {self.uuid} for {self.show}'
+
+
+class Seller(models.Model):
+    name = models.CharField(max_length=100)
+    url = models.URLField()
+
+    def __str__(self):
+        return f'{self.name} - {self.url}'
+
+    # def send_show_to_url(self, show):
+    #     show = Show.objects.get(id=show)
+
+    #     serializer = ShowTicketSerializer(data=show)
+
+    #     response = requests.post(
+    #         self.url,
+    #         serializer.data
+    #     )
+
+    #     return response
+
+
+
+
