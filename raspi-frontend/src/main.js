@@ -9,6 +9,12 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
+
+Vue.http.options.root = "http://localhost:8000";
+Vue.http.interceptors.push((request, next) => {
+  console.log(request);
+  next();
+});
 Vue.config.productionTip = false;
 
 new Vue({

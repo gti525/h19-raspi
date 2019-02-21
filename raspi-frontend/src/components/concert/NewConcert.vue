@@ -1,33 +1,38 @@
 <template>
-    <div id="newVenue">
-        <h2>Créer un Concert</h2>
-        <form id="venueForm" v-on:submit="submit(newConcert)">
-            <div class="form-data-row">
-                <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
-            </div>
-            <div class="form-data-row">
-                <textarea v-model="newConcert.description" type="text" name="description" placeholder="description du concert" />
-            </div>
-            <div class="form-data-row">
-                <input v-model="newConcert.date" type="date">
-            </div>
-        </form>
-    </div>
+  <div id="newVenue">
+    <h2>Créer un Concert</h2>
+    <form id="venueForm" v-on:submit="submit(newConcert)">
+      <div class="form-data-row">
+        <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
+      </div>
+      <div class="form-data-row">
+        <textarea
+          v-model="newConcert.description"
+          type="text"
+          name="description"
+          placeholder="description du concert"
+        />
+      </div>
+      <div class="form-data-row">
+        <input v-model="newConcert.date" type="date">
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
 export default {
-    name: "NewConcert",
-    props: {
-        newConcert: Object,
-    },
-    methods: {
-        submit(form){
-            console.log(form);
-            this.$emit("cancelCreateEdit");
-        }
+  name: "NewConcert",
+  props: {
+    newConcert: Object
+  },
+  methods: {
+    submit(form) {
+      console.log(form);
+      this.$emit("cancelCreateEdit");
     }
-}
+  }
+};
 </script>
 
 <style scoped>

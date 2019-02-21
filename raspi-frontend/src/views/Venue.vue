@@ -2,12 +2,9 @@
   <div class="venue">
     <h1>Page des salles de spectacles</h1>
     <button v-if="!createEditVenue" class="btn btn-primary" @click="createVenue">Nouvelle salle</button>
-    <NewVenue
-      v-if="createEditVenue"
-      :newVenue="newForm"
-      :ogVenue="ogVenue"
-      @cancelCreateEdit="cancelCreateEdit"
-    />
+    <NewVenue v-if="createEditVenue" :newVenue="newForm" @cancelCreateEdit="cancelCreateEdit"/>
+    </br>
+    <button class="btn btn-primary" @click="fetchData">Montrer Salles</button>
     <div class="col-md-6 mx-auto">
       <ShowVenue :venues="venues" @cancelCreateEdit="cancelCreateEdit" @editVenue="editVenue"/>
     </div>
@@ -28,27 +25,7 @@ export default {
     return {
       newForm: {},
       createEditVenue: false,
-      // for testing purposes
-      venues: [
-        {
-          id: 36,
-          name: "1st venue",
-          address: "123 avenue",
-          capacity: 420
-        },
-        {
-          id: 37,
-          name: "2nd super venue",
-          address: "456 bld",
-          capacity: 69
-        },
-        {
-          id: 38,
-          name: "3rd amazing place",
-          address: "789 street",
-          capacity: 1337
-        }
-      ]
+      venues: []
     };
   },
   methods: {
@@ -59,6 +36,11 @@ export default {
         address: "",
         capacity: 0
       };
+    },
+    fetchData() {
+      this.$http.get("venues/").then(response => {
+        this.venues = response.body;
+      });
     },
     cancelCreateEdit() {
       this.createEditVenue = !this.createEditVenue;

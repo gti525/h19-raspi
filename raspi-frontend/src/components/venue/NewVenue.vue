@@ -24,12 +24,29 @@
 export default {
   name: "NewVenue",
   props: {
-    newVenue: Object,
-    ogVenue: Object
+    newVenue: Object
   },
   methods: {
     submit(form) {
-      console.log(form);
+      if (form.id) {
+        this.$http.put("venues/" + form.id, form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      } else {
+        this.$http.post("venues/", form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      }
       this.$emit("cancelCreateEdit");
     },
     cancel() {
