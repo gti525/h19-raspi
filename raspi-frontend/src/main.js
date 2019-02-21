@@ -13,7 +13,9 @@ Vue.use(VueResource);
 Vue.http.options.root = "http://localhost:8000";
 Vue.http.interceptors.push((request, next) => {
   console.log(request);
-  next();
+  next(response => {
+    console.log(response);
+  });
 });
 Vue.config.productionTip = false;
 

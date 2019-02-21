@@ -24,12 +24,13 @@
 export default {
   name: "NewVenue",
   props: {
-    newVenue: Object
+    newVenue: Object,
+    resource: Object
   },
   methods: {
     submit(form) {
       if (form.id) {
-        this.$http.put("venues/" + form.id, form).then(
+        this.resource.update({ id: form.id }, form).then(
           response => {
             console.log(response);
           },
@@ -38,7 +39,7 @@ export default {
           }
         );
       } else {
-        this.$http.post("venues/", form).then(
+        this.resource.save({}, form).then(
           response => {
             console.log(response);
           },
