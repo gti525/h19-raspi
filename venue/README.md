@@ -5,15 +5,16 @@
 ### Show (Spectacle)
 ```json
 {
-    "name": String, *required
-    "date": String (Format ISO)  *required
+    "name": "String",
+    "date": "String (Format ISO)",
+    "description": "String"
 }
 ```
 
 ### Ticket (Billet)
 ```json
 {
-    "uuid": UUID4,
+    "uuid": "UUID4",
 }
 ```
 
@@ -21,9 +22,9 @@
 ### Venue (Salle)
 ```json
 {
-    "name": String,
-    "address": String,
-    "capacity": Int
+    "name": "String",
+    "address": "String",
+    "capacity": "Int"
 }
 ```
 
@@ -34,10 +35,11 @@ exemple: POST /spectacles
 
 ```json
 {
-    "name": String,
-    "date": String (Format ISO),
-    "venue": {Venue},
-    "tickets": [{Tickets}]
+    "name": "String",
+    "date": "String (Format ISO)",
+    "description": "String",
+    "venue": {"Venue"},
+    "tickets": [{"Tickets"}]
 }
 ```
 

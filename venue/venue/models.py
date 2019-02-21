@@ -15,6 +15,7 @@ class Venue(models.Model):
 
 class Show(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField()
     venue = models.ForeignKey(
         Venue,
         on_delete=models.SET_NULL,
