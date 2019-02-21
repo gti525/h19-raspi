@@ -5,7 +5,6 @@ import SignUp from "./views/SignUp.vue";
 import Venue from "./views/Venue.vue";
 import Concert from "./views/Concert.vue";
 import Stats from "./views/Stats.vue";
-import SignUp from "./views/SignUp.vue";
 
 Vue.use(Router);
 
