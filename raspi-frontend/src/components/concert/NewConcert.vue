@@ -1,33 +1,71 @@
 <template>
-    <div id="newVenue">
-        <h2>Créer un Concert</h2>
-        <form id="venueForm" v-on:submit="submit(newConcert)">
-            <div class="form-data-row">
-                <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
-            </div>
-            <div class="form-data-row">
-                <textarea v-model="newConcert.description" type="text" name="description" placeholder="description du concert" />
-            </div>
-            <div class="form-data-row">
-                <input v-model="newConcert.date" type="date">
-            </div>
-        </form>
-    </div>
+  <div id="newVenue">
+    <h2>Créer un Concert</h2>
+    <form id="venueForm" v-on:submit="submit(newConcert)">
+      <div class="form-data-row">
+        <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
+      </div>
+      <div class="form-data-row">
+        <textarea
+          v-model="newConcert.description"
+          type="text"
+          name="description"
+          placeholder="description du concert"
+        ></textarea>
+      </div>
+      <div class="form-data-row">
+        <input v-model="newConcert.date" type="datetime">
+      </div>
+      <div class="form-data-row">
+        <label class="label">Salle</label>
+        <select v-model="newConcert.venue" required>
+          <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
+        </select>
+      </div>
+      <div class="control">
+        <b-button variant="primary" @click="submit(newConcert)">Soumettre</b-button>
+        <b-button variant="danger" @click="cancel()">Cancel</b-button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
 export default {
-    name: "NewConcert",
-    props: {
-        newConcert: Object,
+  name: "NewConcert",
+  props: {
+    newConcert: Object,
+    resource: Object,
+    venues: Array
+  },
+  methods: {
+    submit(form) {
+      if (form.id) {
+        this.resource.update({ id: form.id }, form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+        this.$emit("cancelCreateEdit");
+      } else {
+        this.resource.save({}, form).then(
+          response => {
+            this.$emit("cancelCreateEdit", response.body);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      }
     },
-    methods: {
-        submit(form){
-            console.log(form);
-            this.$emit("cancelCreateEdit");
-        }
+    cancel() {
+      this.$emit("cancelCreateEdit");
     }
-}
+  }
+};
 </script>
 
 <style scoped>
@@ -82,3 +120,4 @@ div.form-data-row > input:focus {
   border: 1px solid #0074d9;
 }
 </style>
+

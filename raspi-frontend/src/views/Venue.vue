@@ -1,11 +1,11 @@
 <template>
   <div class="venue">
-    <h1>Page des salles de spectacles</h1>
+    <h1>Salles de spectacles</h1>
     <button v-if="!createEditVenue" class="btn btn-primary" @click="createVenue">Nouvelle salle</button>
     <NewVenue
       v-if="createEditVenue"
       :newVenue="newForm"
-      :ogVenue="ogVenue"
+      :resource="resource"
       @cancelCreateEdit="cancelCreateEdit"
     />
     <div class="col-md-6 mx-auto">
@@ -28,27 +28,8 @@ export default {
     return {
       newForm: {},
       createEditVenue: false,
-      // for testing purposes
-      venues: [
-        {
-          id: 36,
-          name: "1st venue",
-          address: "123 avenue",
-          capacity: 420
-        },
-        {
-          id: 37,
-          name: "2nd super venue",
-          address: "456 bld",
-          capacity: 69
-        },
-        {
-          id: 38,
-          name: "3rd amazing place",
-          address: "789 street",
-          capacity: 1337
-        }
-      ]
+      venues: [],
+      resource: {}
     };
   },
   methods: {
@@ -66,6 +47,12 @@ export default {
     editVenue(venue) {
       this.newForm = venue;
     }
+  },
+  created() {
+    this.resource = this.$resource("venues/{id}");
+    this.resource.get().then(response => {
+      this.venues = response.body;
+    });
   }
 };
 </script>

@@ -15,6 +15,7 @@ class ShowDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ShowListCreateView(generics.ListCreateAPIView):
     queryset = Show.objects.all()
     serializer_class = ShowSerializer
+    permission_classes = ()
 
 
 class VenueDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -26,6 +27,7 @@ class VenueDetailView(generics.RetrieveUpdateDestroyAPIView):
 class VenueListCreateView(generics.ListCreateAPIView):
     queryset = Venue.objects.all()
     serializer_class = VenueSerializer
+    permission_classes = ()
 
 
 class TicketShowListView(generics.ListAPIView):

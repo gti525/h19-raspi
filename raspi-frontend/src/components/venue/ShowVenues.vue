@@ -5,7 +5,7 @@
         <p>{{venue.name}}</p>
         <p>{{venue.address}}</p>
         <p>Capacité: {{venue.capacity}} personnes</p>
-        <b-button variant="primary" @click="edit(venue)">Edit</b-button>
+        <b-button variant="primary" @click="edit(venue)">Modifier</b-button>
       </div>
     </div>
   </div>

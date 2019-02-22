@@ -25,11 +25,29 @@ export default {
   name: "NewVenue",
   props: {
     newVenue: Object,
-    ogVenue: Object
+    resource: Object
   },
   methods: {
     submit(form) {
-      console.log(form);
+      if (form.id) {
+        this.resource.update({ id: form.id }, form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      } else {
+        this.resource.save({}, form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      }
       this.$emit("cancelCreateEdit");
     },
     cancel() {
