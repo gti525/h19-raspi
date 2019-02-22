@@ -1,6 +1,6 @@
 <template>
   <div class="venue">
-    <h1>Page des salles de spectacles</h1>
+    <h1>Salles de spectacles</h1>
     <button v-if="!createEditVenue" class="btn btn-primary" @click="createVenue">Nouvelle salle</button>
     <NewVenue
       v-if="createEditVenue"

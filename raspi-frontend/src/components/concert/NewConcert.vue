@@ -11,10 +11,20 @@
           type="text"
           name="description"
           placeholder="description du concert"
-        />
+        ></textarea>
       </div>
       <div class="form-data-row">
-        <input v-model="newConcert.date" type="date">
+        <input v-model="newConcert.date" type="datetime">
+      </div>
+      <div class="form-data-row">
+        <label class="label">Salle</label>
+        <select v-model="newConcert.venue" required>
+          <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
+        </select>
+      </div>
+      <div class="control">
+        <b-button variant="primary" @click="submit(newConcert)">Soumettre</b-button>
+        <b-button variant="danger" @click="cancel()">Cancel</b-button>
       </div>
     </form>
   </div>
@@ -24,11 +34,34 @@
 export default {
   name: "NewConcert",
   props: {
-    newConcert: Object
+    newConcert: Object,
+    resource: Object,
+    venues: Array
   },
   methods: {
     submit(form) {
-      console.log(form);
+      if (form.id) {
+        this.resource.update({ id: form.id }, form).then(
+          response => {
+            console.log(response);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+        this.$emit("cancelCreateEdit");
+      } else {
+        this.resource.save({}, form).then(
+          response => {
+            this.$emit("cancelCreateEdit", response.body);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+      }
+    },
+    cancel() {
       this.$emit("cancelCreateEdit");
     }
   }
@@ -87,3 +120,4 @@ div.form-data-row > input:focus {
   border: 1px solid #0074d9;
 }
 </style>
+

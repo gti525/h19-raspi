@@ -1,10 +1,22 @@
 <template>
   <div>
-    <h1>Page des spectacles/Concerts</h1>
+    <h1>Spectacles</h1>
     <button v-if="!createEditConcert" class="btn btn-primary" @click="createConcert">Nouveau Concert</button>
-    <NewConcert v-if="createEditConcert" :newConcert="newConcert" @cancelCreateEdit="cancelCreateEdit" />
+    <NewConcert
+      v-if="createEditConcert"
+      :newConcert="newConcert"
+      @cancelCreateEdit="cancelCreateEdit"
+      :resource="resource"
+      :venues="venues"
+    />
     <div class="col-md-6 mx-auto">
-      <ShowConcerts :concerts="concerts" />
+      <ShowConcerts
+        :concerts="concerts"
+        :venues="venues"
+        @cancelCreateEdit="cancelCreateEdit"
+        @editConcert="editConcert"
+        @remove="remove"
+      />
     </div>
   </div>
 </template>
@@ -21,49 +33,14 @@ export default {
   },
   data: () => {
     return {
+      resource: {},
       newConcert: {},
       createEditConcert: false,
-      venues: [
-        {
-          id: 36,
-          name: "1st venue",
-          address: "123 avenue",
-          capacity: 420
-        },
-        {
-          id: 37,
-          name: "2nd super venue",
-          address: "456 bld",
-          capacity: 69
-        },
-        {
-          id: 38,
-          name: "3rd amazing place",
-          address: "789 street",
-          capacity: 1337
-        }
-      ],
-      concerts: [
-        {
-          id: 10,
-          name: "Ariana Grande Concert",
-          date: new Date(2019, 6, 4, 8),
-          description: "Ariana Grande de retour à Montréal bitches"
-        },
-        {
-          id: 12,
-          name: "BlackPink In Your Area",
-          date: new Date(2029, 8, 14, 8),
-          description: "Du kpop à Montréal"
-        }
-      ]
+      venues: [],
+      concerts: []
     };
   },
   methods: {
-    mounted() {
-      this.concerts[0].venue = this.venues[0];
-      this.concerts[1].venue = this.venues[1];
-    },
     createConcert() {
       this.createEditConcert = !this.createEditVenue;
       this.newConcert = {
@@ -71,14 +48,33 @@ export default {
         date: new Date(),
         description: "",
         venue: this.venues[0]
-      }
+      };
     },
-    cancelCreateEdit() {
+    cancelCreateEdit(concert) {
+      if (concert) {
+        this.concerts.push(concert);
+      }
       this.createEditConcert = !this.createEditConcert;
     },
     editConcert(concert) {
       this.newConcert = concert;
+    },
+    remove(concert, index) {
+      this.resource.remove({ id: concert.id }).then(response => {
+        if (response.code === "204") {
+          this.$delete(this.concerts, index);
+        }
+      });
     }
+  },
+  created() {
+    this.resource = this.$resource("shows/{id}");
+    this.$http.get("venues/").then(response => {
+      this.venues = response.body;
+    });
+    this.resource.get().then(response => {
+      this.concerts = response.body;
+    });
   }
 };
 </script>
