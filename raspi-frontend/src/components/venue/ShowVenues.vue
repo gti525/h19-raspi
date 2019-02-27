@@ -2,9 +2,21 @@
   <div id="showVenue">
     <div v-for="venue in venues" class="card" :key="venue.id">
       <div class="card-body">
-        <p>{{venue.name}}</p>
-        <p>{{venue.address}}</p>
+        <h2>{{venue.name}}</h2>
+        <p>adresse: {{venue.address}}</p>
         <p>Capacité: {{venue.capacity}} personnes</p>
+        <div v-if="venue.shows.length !== 0">
+          <h4>Spectacles à venir:</h4>
+          <div v-for="show in venue.shows" :key="show.id">
+            <div v-if="dateHasPassed(show.date)">
+              <p>
+                {{show.name}}
+                <br>
+                {{show.date}}
+              </p>
+            </div>
+          </div>
+        </div>
         <b-button variant="primary" @click="edit(venue)">Modifier</b-button>
       </div>
     </div>
@@ -21,7 +33,17 @@ export default {
     edit(venue) {
       this.$emit("editVenue", venue);
       this.$emit("cancelCreateEdit");
+    },
+    dateHasPassed(date) {
+      let dateConverted = new Date(date);
+      let today = new Date();
+      return dateConverted < today;
     }
+  },
+  data() {
+    return {
+      today: new Date()
+    };
   }
 };
 </script>
