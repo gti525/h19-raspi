@@ -38,17 +38,17 @@ export default {
             console.log(error);
           }
         );
+        this.$emit("cancelCreateEdit");
       } else {
         this.resource.save({}, form).then(
           response => {
-            console.log(response);
+            this.$emit("cancelCreateEdit", response.body);
           },
           error => {
             console.log(error);
           }
         );
       }
-      this.$emit("cancelCreateEdit");
     },
     cancel() {
       this.$emit("cancelCreateEdit");
