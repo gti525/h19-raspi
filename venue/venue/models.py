@@ -36,16 +36,6 @@ class Ticket(models.Model):
     def __str__(self):
         return f'Ticket {self.uuid} for {self.show}'
 
-class Billet(models.Model):
-    idMobile = models.CharField(max_length=150)
-    idBillet = models.UUIDField()
-    date = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.sold
-
-
-
 
 class Seller(models.Model):
     name = models.CharField(max_length=100)

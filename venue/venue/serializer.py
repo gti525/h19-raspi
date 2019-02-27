@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Ticket, Show, Venue, Billet
+from .models import Ticket, Show, Venue
 
 
 class ShowSerializer(serializers.ModelSerializer):
@@ -22,10 +22,6 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = '__all__'
 
-class BilletSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Billet
-        fields = '__all__'
 
 class ShowTicketSerializer(ShowSerializer):
     tickets = TicketSerializer(many=True, read_only=True)

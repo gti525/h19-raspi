@@ -54,5 +54,4 @@ urlpatterns = [
     path('shows/<int:show_id>/tickets', views.TicketShowListView.as_view(), name='show-ticket-list'),
     path('venues/', views.VenueListCreateView.as_view(), name='venue-list'),
     path('venues/<int:pk>', views.VenueDetailView.as_view(), name='venue-detail'),
-    path('api/billetScan/', views.BilletScanView.as_view(), name='venue-list'),
 ]
