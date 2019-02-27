@@ -41,7 +41,10 @@ export default {
         capacity: 0
       };
     },
-    cancelCreateEdit() {
+    cancelCreateEdit(venue) {
+      if (venue) {
+        this.venues.push(venue);
+      }
       this.createEditVenue = !this.createEditVenue;
     },
     editVenue(venue) {
