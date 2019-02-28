@@ -59,15 +59,31 @@ export default {
     editConcert(concert) {
       this.newConcert = concert;
     },
-    remove(concert, index) {
-      this.resource.remove({ id: concert.id }).then(response => {
-        if (response.code === "204") {
-          this.$delete(this.concerts, index);
+    async remove(concertArray) {
+      await this.refreshToken();
+      this.resource.remove({ id: concertArray.concert.id }).then(response => {
+        if (response.status === "204") {
+          this.$delete(this.concerts, concertArray.index);
         }
       });
+    },
+    async refreshToken() {
+      var token = JSON.parse(localStorage.getItem("token"));
+      await this.$http
+        .post("api/token/refresh/", { refresh: token.refresh })
+        .then(
+          res => {
+            token.access = res.body.access;
+            localStorage.setItem("token", JSON.stringify(token));
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   },
-  created() {
+  async created() {
+    await this.refreshToken();
     this.resource = this.$resource("shows/{id}");
     this.$http.get("venues/").then(response => {
       this.venues = response.body;
