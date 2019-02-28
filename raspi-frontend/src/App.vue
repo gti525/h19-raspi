@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/" v-if="!isLoggedIn()">Connexion</router-link>
       <router-link to="/venues" v-if="isLoggedIn()">Salles</router-link>
       <span v-if="isLoggedIn()">|</span>
       <router-link to="/concerts" v-if="isLoggedIn()">Spectacles</router-link>

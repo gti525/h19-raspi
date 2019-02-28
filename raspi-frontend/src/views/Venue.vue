@@ -49,9 +49,24 @@ export default {
     },
     editVenue(venue) {
       this.newForm = venue;
+    },
+    async refreshToken() {
+      var token = JSON.parse(localStorage.getItem("token"));
+      await this.$http
+        .post("api/token/refresh/", { refresh: token.refresh })
+        .then(
+          res => {
+            token.access = res.body.access;
+            localStorage.setItem("token", JSON.stringify(token));
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   },
-  created() {
+  async created() {
+    await this.refreshToken();
     this.resource = this.$resource("venues/{id}");
     this.resource.get().then(response => {
       this.venues = response.body;

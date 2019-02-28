@@ -1,6 +1,11 @@
 <template>
   <div id="newVenue">
     <h2>Créer un Concert</h2>
+    <div v-if="errors">
+      <div v-for="(value, key) in errors" :key="key">
+        <span class="alert alert-danger">{{value}}</span>
+      </div>
+    </div>
     <form id="venueForm" v-on:submit="submit(newConcert)">
       <div class="form-data-row">
         <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
@@ -31,6 +36,7 @@
 </template>
 
 <script>
+import { tokenMixin } from "../../tokenMixin.js";
 export default {
   name: "NewConcert",
   props: {
@@ -38,25 +44,31 @@ export default {
     resource: Object,
     venues: Array
   },
+  data: () => {
+    return {
+      errors: {}
+    };
+  },
+  mixins: [tokenMixin],
   methods: {
-    submit(form) {
+    async submit(form) {
+      await this.refreshToken();
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => {
-            console.log(response);
-          },
+          response => {},
           error => {
-            console.log(error);
+            this.errors = error.body;
           }
         );
         this.$emit("cancelCreateEdit");
       } else {
         this.resource.save({}, form).then(
           response => {
-            this.$emit("cancelCreateEdit", response.body);
+            if (response.status === 201)
+              this.$emit("cancelCreateEdit", response.body);
           },
           error => {
-            console.log(error);
+            this.errors = error.body;
           }
         );
       }
