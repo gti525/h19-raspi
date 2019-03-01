@@ -17,17 +17,38 @@ export default new Router({
     {
       path: "/venues",
       name: "venue",
-      component: Venue
+      component: Venue,
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({ path: "/" });
+        }
+      }
     },
     {
       path: "/concerts",
       name: "concerts",
-      component: Concert
+      component: Concert,
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({ path: "/" });
+        }
+      }
     },
     {
       path: "/stats",
       name: "stats",
-      component: Stats
+      component: Stats,
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({ path: "/" });
+        }
+      }
     }
   ]
 });

@@ -11,12 +11,21 @@ Vue.use(BootstrapVue);
 Vue.use(VueResource);
 
 Vue.http.options.root = "http://localhost:8000";
+
 Vue.http.interceptors.push((request, next) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  const removeAuthHeaders = request.url.includes("api");
+  if (token) {
+    if (removeAuthHeaders) {
+      request.headers.delete("Authorization");
+    } else {
+      request.headers.set("Authorization", token.access);
+    }
+  }
   console.log(request);
-  next(response => {
-    console.log(response);
-  });
+  next(response => console.log(response));
 });
+
 Vue.config.productionTip = false;
 
 new Vue({

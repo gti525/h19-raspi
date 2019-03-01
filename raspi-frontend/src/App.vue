@@ -1,14 +1,31 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Inscription</router-link>|
-      <router-link to="/venues">Salles</router-link>|
-      <router-link to="/concerts">Spectacles</router-link>|
-      <router-link to="/stats">Stats</router-link>|
+      <router-link to="/venues" v-if="isLoggedIn()">Salles</router-link>
+      <span v-if="isLoggedIn()">|</span>
+      <router-link to="/concerts" v-if="isLoggedIn()">Spectacles</router-link>
+      <span v-if="isLoggedIn()">|</span>
+      <router-link to="/stats" v-if="isLoggedIn()">Stats</router-link>
+      <span v-if="isLoggedIn()">|</span>
+      <b-button variant="link" @click="logout()" v-if="isLoggedIn()" style="color:red">Déconnexion</b-button>
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    isLoggedIn() {
+      return localStorage.getItem("token") !== null;
+    },
+    logout() {
+      localStorage.removeItem("token");
+      this.$router.push({ path: "/" });
+    }
+  }
+};
+</script>
 
 <style>
 #app {

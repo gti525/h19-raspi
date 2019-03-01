@@ -21,14 +21,17 @@
 </template>
 
 <script>
+import { tokenMixin } from "../../tokenMixin.js";
 export default {
   name: "NewVenue",
   props: {
     newVenue: Object,
     resource: Object
   },
+  mixins: [tokenMixin],
   methods: {
-    submit(form) {
+    async submit(form) {
+      await this.refreshtoken();
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
           response => {
