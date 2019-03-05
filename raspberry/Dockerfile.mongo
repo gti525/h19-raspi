@@ -1,0 +1,22 @@
+FROM armhf/ubuntu
+
+RUN sudo apt update && apt install -y wget $ sudo aptitude install scons build-essential libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev python-pymongo
+
+RUN mkdir install
+WORKDIR install
+RUN wget https://fastdl.mongodb.org/src/mongodb-src-r3.2.12.tar.gz
+RUN tar xvf mongodb-src-r3.2.12.tar.gz
+WORKDIR mongodb-src-r3.2.12
+
+RUN cd src/third_party/mozjs-38/
+RUN ./get_sources.sh
+RUN ./gen-config.sh arm linux
+RUN cd -
+
+RUN scons core --wiredtiger=off --mmapv1=on
+RUN scons mongo mongod --wiredtiger=off --mmapv1=on
+RUN strip -s mongo
+
+
+WORKDIR build/opt/mongo
+RUN sudo cp mongo mongod mongos /usr/local/bin/
