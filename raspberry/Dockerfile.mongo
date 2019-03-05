@@ -1,6 +1,6 @@
 FROM armhf/ubuntu
 
-RUN sudo apt update && apt install -y wget $ sudo aptitude install scons build-essential libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev python-pymongo
+RUN apt update && apt install -y wget scons build-essential libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-thread-dev python-pymongo
 
 RUN mkdir install
 WORKDIR install
