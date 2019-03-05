@@ -81,14 +81,23 @@ WSGI_APPLICATION = 'venue.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DB_TYPE = os.environ.get('DB_TYPE')
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'venue',
-        'HOST': 'db',
+if DB_TYPE == 'mysql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': 'db',
+            'USER': 'venue',
+            'NAME': 'venue',
+            'PASSWORD': 'venue',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
