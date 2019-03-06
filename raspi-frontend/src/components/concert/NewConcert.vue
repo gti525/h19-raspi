@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { tokenMixin } from "../../tokenMixin.js";
 export default {
   name: "NewConcert",
   props: {
@@ -49,10 +48,8 @@ export default {
       errors: {}
     };
   },
-  mixins: [tokenMixin],
   methods: {
     async submit(form) {
-      await this.refreshToken();
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
           response => {},

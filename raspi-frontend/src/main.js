@@ -9,6 +9,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
+Vue.use(require("vue-moment"));
 
 Vue.http.options.root = "http://localhost:8000";
 
@@ -19,6 +20,28 @@ Vue.http.interceptors.push((request, next) => {
     if (removeAuthHeaders) {
       request.headers.delete("Authorization");
     } else {
+      Vue.http.post("api/token/verify/", { token: token.access }).then(
+        function() {},
+        function(err) {
+          if (err.status === 401) {
+            Vue.http
+              .post("api/token/refresh/", { refresh: token.refresh })
+              .then(
+                function(result) {
+                  token.access = result.access;
+                },
+                function(err) {
+                  console.log(err);
+                  localStorage.removeItem("token");
+                  Vue.router.push({
+                    name: "home",
+                    params: { error: "vous avez été déconnecté " }
+                  });
+                }
+              );
+          }
+        }
+      );
       request.headers.set("Authorization", token.access);
     }
   }
