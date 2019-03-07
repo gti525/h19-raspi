@@ -46,4 +46,5 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/billetScan/', views.BilletScanView.as_view(), name='venue-list'),
+    path('api/BilletNew/', views.BilletNew.as_view(), name='venue-list'),
 ]
