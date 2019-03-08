@@ -32,7 +32,8 @@ class Show(models.Model):
 
 class Ticket(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    sold = models.BooleanField()
+    sold = models.BooleanField(default=False)
+    scanned = models.BooleanField(default=False)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
 
     def __str__(self):
