@@ -5,6 +5,7 @@ from django.db import models
 
 
 class Venue(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
     address = models.CharField(max_length=200)
     capacity = models.PositiveSmallIntegerField()
@@ -14,6 +15,7 @@ class Venue(models.Model):
 
 
 class Show(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     description = models.TextField()
     venue = models.ForeignKey(
@@ -30,7 +32,8 @@ class Show(models.Model):
 
 class Ticket(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    sold = models.BooleanField()
+    sold = models.BooleanField(default=False)
+    scanned = models.BooleanField(default=False)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
 
     def __str__(self):
