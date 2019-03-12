@@ -5,6 +5,7 @@ import Venue from "./views/Venue.vue";
 import Concert from "./views/Concert.vue";
 import Stats from "./views/Stats.vue";
 import Home from "./views/Home.vue";
+import Stats2 from "./views/Stats2.vue";
 
 Vue.use(Router);
 
@@ -56,6 +57,21 @@ export default new Router({
       path: "/stats",
       name: "stats",
       component: Stats,
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({
+            name: "sign-up",
+            params: { error: "Veuillez vous connecter avant de poursuivre" }
+          });
+        }
+      }
+    },
+    {
+      path: "/stats2",
+      name: "stats2",
+      component: Stats2,
       beforeEnter: (to, from, next) => {
         if (localStorage.getItem("token")) {
           next();

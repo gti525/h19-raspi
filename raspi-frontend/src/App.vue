@@ -13,6 +13,8 @@
         <span>|</span>
         <router-link to="/stats">Stats</router-link>
         <span>|</span>
+        <router-link to="/stats2">Stats2</router-link>
+        <span>|</span>
         <b-button variant="link" @click="logout()" style="color:red">Déconnexion</b-button>
       </div>
     </div>

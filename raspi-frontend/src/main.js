@@ -14,7 +14,7 @@ Vue.use(require("vue-moment"));
 Vue.http.options.root = "http://localhost:8000";
 
 Vue.http.interceptors.push((request, next) => {
-  let token = JSON.parse(localStorage.getItem("token"));
+  var token = JSON.parse(localStorage.getItem("token"));
   const removeAuthHeaders = request.url.includes("api");
   if (token) {
     if (removeAuthHeaders) {
@@ -27,8 +27,12 @@ Vue.http.interceptors.push((request, next) => {
             Vue.http
               .post("api/token/refresh/", { refresh: token.refresh })
               .then(
-                function(result) {
-                  token.access = result.access;
+                result => {
+                  token = {
+                    access: result.body.access,
+                    refresh: token.refresh
+                  };
+                  localStorage.setItem("token", JSON.stringify(token));
                 },
                 function(err) {
                   console.log(err);
@@ -42,11 +46,24 @@ Vue.http.interceptors.push((request, next) => {
           }
         }
       );
-      request.headers.set("Authorization", token.access);
+      request.headers.set("Authorization", "Bearer " + token.access);
     }
   }
-  console.log(request);
-  next(response => console.log(response));
+  next(response => {
+    if (response.status === 400) {
+      Vue.http
+        .post("api/token/refresh/", { refresh: token.refresh })
+        .then(result => {
+          localStorage.setItem(
+            "token",
+            JSON.stringify({
+              access: result.body.access,
+              refresh: token.refresh
+            })
+          );
+        });
+    }
+  });
 });
 
 Vue.config.productionTip = false;
