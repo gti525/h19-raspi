@@ -2,6 +2,8 @@ import uuid
 import requests
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Venue(models.Model):
@@ -28,6 +30,15 @@ class Show(models.Model):
 
     def __str__(self):
         return f'{self.name} | {self.venue}'
+
+
+@receiver(post_save, sender=Show)
+def create_tickets(sender, instance, created, **kwargs):
+    if created:
+        Ticket.objects.bulk_create(
+            [Ticket(show=instance) for i in range(instance.venue.capacity)],
+            batch_size=instance.venue.capacity,
+        )
 
 
 class Ticket(models.Model):
