@@ -25,7 +25,7 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 SECRET_KEY = '4$ir&xu4n1@u2x#l)4h0j$+3wx0bljyoh)g%lw3$=nvs2zq(7+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
