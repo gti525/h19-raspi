@@ -8,11 +8,11 @@
         <div v-if="venue.shows.length !== 0">
           <h4>Spectacles à venir:</h4>
           <div v-for="show in venue.shows" :key="show.id">
-            <div v-if="dateHasPassed(show.date)">
+            <div v-if="!dateHasPassed(show.date)">
               <p>
                 {{show.name}}
                 <br>
-                {{show.date}}
+                {{show.date | moment("YYYY-MM-DD HH:MM")}}
               </p>
             </div>
           </div>
@@ -35,9 +35,8 @@ export default {
       this.$emit("cancelCreateEdit");
     },
     dateHasPassed(date) {
-      let dateConverted = new Date(date);
-      let today = new Date();
-      return dateConverted < today;
+      let dateConverted = this.$moment(date);
+      return this.$moment().isAfter(dateConverted);
     }
   },
   data() {

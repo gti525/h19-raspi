@@ -55,7 +55,6 @@ export default {
   mounted: prepareDatePicker,
   methods: {
     async submit(form) {
-      await this.refreshToken();
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
           response => { console.debug(response) },

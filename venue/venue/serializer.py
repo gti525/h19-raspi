@@ -25,3 +25,9 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class ShowTicketSerializer(ShowSerializer):
     tickets = TicketSerializer(many=True, read_only=True)
+
+
+class ShowStatsSerializer(serializers.Serializer):
+    sold = serializers.IntegerField()
+    scanned = serializers.IntegerField()
+    total = serializers.IntegerField()

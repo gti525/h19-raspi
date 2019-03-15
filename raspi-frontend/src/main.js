@@ -9,21 +9,61 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
+Vue.use(require("vue-moment"));
 
 Vue.http.options.root = "http://localhost:8080";
 
 Vue.http.interceptors.push((request, next) => {
-  let token = JSON.parse(localStorage.getItem("token"));
+  var token = JSON.parse(localStorage.getItem("token"));
   const removeAuthHeaders = request.url.includes("api");
   if (token) {
     if (removeAuthHeaders) {
       request.headers.delete("Authorization");
     } else {
-      request.headers.set("Authorization", token.access);
+      Vue.http.post("api/token/verify/", { token: token.access }).then(
+        function() {},
+        function(err) {
+          if (err.status === 401) {
+            Vue.http
+              .post("api/token/refresh/", { refresh: token.refresh })
+              .then(
+                result => {
+                  token = {
+                    access: result.body.access,
+                    refresh: token.refresh
+                  };
+                  localStorage.setItem("token", JSON.stringify(token));
+                },
+                function(err) {
+                  console.log(err);
+                  localStorage.removeItem("token");
+                  Vue.router.push({
+                    name: "home",
+                    params: { error: "vous avez été déconnecté " }
+                  });
+                }
+              );
+          }
+        }
+      );
+      request.headers.set("Authorization", "Bearer " + token.access);
     }
   }
-  console.log(request);
-  next(response => console.log(response));
+  next(response => {
+    if (response.status === 400) {
+      Vue.http
+        .post("api/token/refresh/", { refresh: token.refresh })
+        .then(result => {
+          localStorage.setItem(
+            "token",
+            JSON.stringify({
+              access: result.body.access,
+              refresh: token.refresh
+            })
+          );
+        });
+    }
+  });
 });
 
 Vue.config.productionTip = false;

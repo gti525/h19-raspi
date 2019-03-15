@@ -1,12 +1,23 @@
 <template>
   <div id="newVenue">
     <h2>Créer une salle</h2>
+    <div v-if="errors">
+      <div v-for="(value, key) in errors" :key="key">
+        <span class="alert alert-danger">{{key}}: {{value}}</span>
+      </div>
+    </div>
     <form id="venueForm" v-on:submit="submit(newVenue)">
       <div class="form-data-row">
         <input v-model="newVenue.name" type="text" name="name" placeholder="nom">
       </div>
+      <div class="form-data-row multiple-data">
+        <input v-model="street" type="text" name="address" placeholder="adresse">
+      </div>
       <div class="form-data-row">
-        <input v-model="newVenue.address" type="text" name="address" placeholder="adresse">
+        <input v-model="city" type="text" name="ville" placeholder="ville">
+      </div>
+      <div class="form-data-row">
+        <input v-model="postalCode" type="text" name="postalCode" placeholder="code postal">
       </div>
       <div class="form-data-row">
         <label class="label">Capacité</label>
@@ -21,24 +32,28 @@
 </template>
 
 <script>
-import { tokenMixin } from "../../tokenMixin.js";
 export default {
   name: "NewVenue",
   props: {
     newVenue: Object,
     resource: Object
   },
-  mixins: [tokenMixin],
+  data() {
+    return {
+      street: "",
+      city: "",
+      postalCode: "",
+      errors: {}
+    };
+  },
   methods: {
     async submit(form) {
-      await this.refreshtoken();
+      form.address = this.street + ", " + this.city + ", " + this.postalCode;
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => {
-            console.log(response);
-          },
+          response => {},
           error => {
-            console.log(error);
+            this.errors = error.body;
           }
         );
         this.$emit("cancelCreateEdit");
@@ -48,7 +63,7 @@ export default {
             this.$emit("cancelCreateEdit", response.body);
           },
           error => {
-            console.log(error);
+            this.errors = error.body;
           }
         );
       }

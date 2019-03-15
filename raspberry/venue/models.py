@@ -2,12 +2,9 @@ import uuid
 import requests
 
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 class Venue(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
     address = models.CharField(max_length=200)
     capacity = models.PositiveSmallIntegerField()
@@ -17,7 +14,6 @@ class Venue(models.Model):
 
 
 class Show(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     description = models.TextField()
     venue = models.ForeignKey(
@@ -32,23 +28,23 @@ class Show(models.Model):
         return f'{self.name} | {self.venue}'
 
 
-@receiver(post_save, sender=Show)
-def create_tickets(sender, instance, created, **kwargs):
-    if created:
-        Ticket.objects.bulk_create(
-            [Ticket(show=instance) for i in range(instance.venue.capacity)],
-            batch_size=instance.venue.capacity,
-        )
-
-
 class Ticket(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    sold = models.BooleanField(default=False)
-    scanned = models.BooleanField(default=False)
+    sold = models.BooleanField()
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'Ticket {self.uuid} for {self.show}'
+
+class Billet(models.Model):
+    idMobile = models.CharField(max_length=150)
+    idBillet = models.UUIDField()
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.sold
+
+
 
 
 class Seller(models.Model):

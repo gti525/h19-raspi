@@ -66,24 +66,9 @@ export default {
           this.$delete(this.concerts, concertArray.index);
         }
       });
-    },
-    async refreshToken() {
-      var token = JSON.parse(localStorage.getItem("token"));
-      await this.$http
-        .post("api/token/refresh/", { refresh: token.refresh })
-        .then(
-          res => {
-            token.access = res.body.access;
-            localStorage.setItem("token", JSON.stringify(token));
-          },
-          error => {
-            console.log(error);
-          }
-        );
     }
   },
   async created() {
-    await this.refreshToken();
     this.resource = this.$resource("shows/{id}");
     this.$http.get("venues/").then(response => {
       this.venues = response.body;
