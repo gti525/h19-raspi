@@ -50,7 +50,8 @@ export default {
   height: 100vh;
   width: 100vw;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #app.sign-up {

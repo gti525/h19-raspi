@@ -1,5 +1,5 @@
 <template>
-  <div id="newVenue">
+  <div id="newVenue" style="display: none">
     <h2>Créer une salle</h2>
     <div v-if="errors">
       <div v-for="(value, key) in errors" :key="key">
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import $ from "jquery";
+
 export default {
   name: "NewVenue",
   props: {
@@ -45,6 +47,9 @@ export default {
       postalCode: "",
       errors: {}
     };
+  },
+  mounted: function() {
+    $('#newVenue').slideDown(400);
   },
   methods: {
     async submit(form) {
@@ -68,8 +73,11 @@ export default {
         );
       }
     },
-    cancel() {
-      this.$emit("cancelCreateEdit");
+  cancel() {
+    let that = this;
+    $('#newVenue').slideUp(400, function() {
+      that.$emit("cancelCreateEdit");
+    });
     }
   }
 };
@@ -79,10 +87,11 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 420px;
+  height: 450px;
   width: 495px;
   display: inline-block;
   position: relative;
+  border: 3px solid black;
 }
 
 #newVenue > h2,
@@ -99,6 +108,21 @@ export default {
 #newVenue > h5 {
   margin-bottom: 1rem;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+}
+
+button.btn {
+  margin-top: 0.5rem;
+}
+
+button.btn.btn-primary {
+  margin-right: 1rem;
+  background-color: #2ECC40;
+  border-color: #AAAAAA;
+}
+
+button.btn.btn-primary + button {
+  background-color: rgb(108, 117, 125);
+  border-color: darkgray;
 }
 
 div.form-data-row {

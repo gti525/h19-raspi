@@ -125,7 +125,6 @@ img#imgSalle {
 }
 
 #imgSalleOverlay {
-  /* display: none; */
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -133,8 +132,6 @@ img#imgSalle {
   left: 0;
   z-index: 0.5;
   background-color: rgba(0,0,0,0.6);
-  /* -webkit-clip-path: polygon(-20% 50%, 100% -40%, 100% 40%, 10% 120%);
-  clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%); */
 }
 
 h1.page-title {
@@ -142,7 +139,7 @@ h1.page-title {
   position: absolute;
   left: 0;
   top: 0;
-  width: 30%;
+  width: auto;
   font-family: 'Raleway', sans-serif;
   text-align: left;
   padding: 0.6rem 1rem;
@@ -151,7 +148,8 @@ h1.page-title {
   letter-spacing: 1px;
   font-size: 3rem;
   z-index: 1;
-  /* text-decoration: underline; */
+  color: white;
+  text-shadow: 2px 2px 5px black;
 }
 
 #tableContainer {
@@ -194,18 +192,10 @@ div.venue {
   height: calc(100% - 85px);
 }
 
-h1 {
-  margin: 0;
-  color: white;
-  margin: 1rem;
-  text-shadow: 2px 2px 5px black;
-}
-
 .button {
   font-family: 'Sniglet', cursive;
   padding-left: 2rem;
   padding-right: 2rem;
-  /* background-color: rgb(108, 117, 125); */
   background-color: rgba(240, 240, 240, 1);
   border-color: rgba(0,0,0,0.8);
   border-width: 2px;
