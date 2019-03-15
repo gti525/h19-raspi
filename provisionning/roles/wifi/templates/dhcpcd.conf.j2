@@ -1,0 +1,6 @@
+interface {{ wifi.interface }}
+    static ip_address={{ wifi.ip_addr_cidr }}
+    nohook wpa_supplicant
+
+denyinterfaces wlan0
+denyinterfaces eth0

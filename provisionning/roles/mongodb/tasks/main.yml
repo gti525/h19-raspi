@@ -1,0 +1,7 @@
+---
+- name: Install mongodb-server
+  package:
+    name: mongodb-server
+    state: present
+
+
