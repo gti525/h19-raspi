@@ -1,5 +1,5 @@
 <template>
-  <div id="newVenue">
+  <div id="newVenue" style="display: none">
     <h2>Créer un Concert</h2>
     <div v-if="errors">
       <div v-for="(value, key) in errors" :key="key">
@@ -19,7 +19,7 @@
         ></textarea>
       </div>
       <div class="form-data-row" style="padding-top: 0">
-        <input class="date-selector" type="text" placeholder="Select a date">
+        <input class="date-selector" type="text" placeholder="Date du concert">
       </div>
       <div class="form-data-row" id="roomSelectionContainer">
         <label id="roomLabel" class="label">Salle</label>
@@ -36,8 +36,8 @@
 </template>
 
 <script>
-import { tokenMixin } from "../../tokenMixin.js";
 import datepicker from 'js-datepicker';
+import $ from "jquery";
 
 export default {
   name: "NewConcert",
@@ -51,8 +51,14 @@ export default {
       errors: {}
     };
   },
-  mixins: [tokenMixin],
-  mounted: prepareDatePicker,
+  mounted: function() {
+    prepareDatePicker();
+    window.newConcert = this.newConcert;
+    $('#newVenue').slideDown(400);
+  },
+  beforeRouteLeave(from, to, next) {
+    next();
+  },
   methods: {
     async submit(form) {
       if (form.id) {
@@ -76,15 +82,20 @@ export default {
       }
     },
     cancel() {
-      this.$emit("cancelCreateEdit");
+      let that = this;
+      $('#newVenue').slideUp(400, function() {
+        that.$emit("cancelCreateEdit");
+      });
     }
   }
 };
 
 function prepareDatePicker() {
+  let that = this;
   const picker = datepicker('input.date-selector[type=text]', {
     onSelect: (instance, date) => {
-      console.warn('ive been selected woohoo', instance, date);
+      console.log('updating new concert date to: ', date);
+      window.newConcert.date = date;
     }
   });
 }
@@ -96,13 +107,14 @@ function prepareDatePicker() {
 @import url('./../../../node_modules/js-datepicker/dist/datepicker.min.css');
 
 #newVenue {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(240, 240, 240, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
   height: 375px;
   width: 495px;
   display: inline-block;
   position: relative;
+  z-index: 10;
 }
 
 #newVenue > h2,

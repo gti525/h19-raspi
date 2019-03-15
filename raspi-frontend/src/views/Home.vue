@@ -1,10 +1,12 @@
 <template>
   <div id="home">
     <span v-if="error" class="alert alert-danger">{{error}}</span>
-    <div>
-      <h1 style="color: white">BIENVENUE SUR LE SITE DE
-        <br>GESTION DE SALLES ET DE SPECTACLES
-      </h1>
+    <div id="welcomeMsgContainer">
+      <div>
+        <h1>BIENVENUE SUR LE SITE DE
+          <br>GESTION DE SALLES ET DE SPECTACLES
+        </h1>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +22,27 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Acme");
+
+#welcomeMsgContainer {
+  display: table;
+  position: relative;
+  width: 100vw;
+  height: 100%;
+}
+
+#welcomeMsgContainer > div {
+  display: table-cell;
+  vertical-align: middle;
+  height: 30rem;
+}
+
+#welcomeMsgContainer h1 {
+  color: #fafafa;
+  background-color: rgba(0,0,0,0.55);
+  padding: 3rem 0;
+  font-family: "Acme", sans-serif;
+  text-shadow: 2px 2px 5px black;
+}
 
 div.side-panel {
   display: table-cell;

@@ -68,7 +68,7 @@ Vue.http.interceptors.push((request, next) => {
 
 Vue.config.productionTip = false;
 
-new Vue({
+global.vue = new Vue({
   router,
   render: h => h(App)
 }).$mount("#app");

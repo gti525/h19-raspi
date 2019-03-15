@@ -32,6 +32,13 @@ export default {
       resource: {}
     };
   },
+  mounted: function() {
+    document.getElementById("app").classList.add("salles");
+  },
+  beforeRouteLeave: function(from, to, next) {
+    document.getElementById("app").classList.remove("salles");
+    next();
+  },
   methods: {
     createVenue() {
       this.createEditVenue = !this.createEditVenue;

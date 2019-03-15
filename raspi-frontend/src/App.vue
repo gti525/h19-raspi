@@ -37,6 +37,7 @@ export default {
 </script>
 
 <style>
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,6 +49,8 @@ export default {
   background-size: cover;
   height: 100vh;
   width: 100vw;
+  position: relative;
+  overflow: hidden;
 }
 
 #app.sign-up {
@@ -65,12 +68,18 @@ export default {
   width: 100vw;
 }
 
+#app.salles, #app.concerts {
+  background: rgba(250,250,250,1);
+}
+
 #nav {
   padding: 30px;
   box-sizing: border-box;
   height: 85px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 1);
   box-shadow: 0px 0px 9px 9px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  position: relative;
 }
 
 #nav a {
