@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Spectacles</h1>
-    <button v-if="!createEditConcert" class="btn btn-primary" @click="createConcert">Nouveau Concert</button>
+    <button v-if="!createEditConcert" class="btn btn-primary button" @click="createConcert">Nouveau Concert</button>
     <NewConcert
       v-if="createEditConcert"
       :newConcert="newConcert"
@@ -9,7 +9,7 @@
       :resource="resource"
       :venues="venues"
     />
-    <div class="col-md-6 mx-auto">
+    <div class="col-md-6 mx-auto button">
       <ShowConcerts
         :concerts="concerts"
         :venues="venues"
@@ -105,5 +105,21 @@ div.venue {
 
 h1 {
   color: white;
+  margin: 1rem;
+  text-shadow: 2px 2px 5px black;
 }
+
+.button {
+  margin: 0.8rem 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  background-color: rgb(108, 117, 125);
+  border-color: darkgray;
+}
+
+.button:hover {
+  background-color: rgb(108, 117, 125);
+  opacity: 0.8;
+}
+
 </style>

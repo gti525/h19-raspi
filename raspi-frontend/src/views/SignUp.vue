@@ -147,7 +147,7 @@ div.form-data-row > input:focus {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 420px;
+  height: 280px;
   width: 495px;
   display: inline-block;
   position: relative;

@@ -8,21 +8,21 @@
     </div>
     <form id="venueForm" v-on:submit="submit(newConcert)">
       <div class="form-data-row">
-        <input v-model="newConcert.name" type="text" name="name" placeholder="nom du Concert">
+        <input v-model="newConcert.name" type="text" name="name" placeholder="Nom du concert">
       </div>
       <div class="form-data-row">
         <textarea
           v-model="newConcert.description"
           type="text"
           name="description"
-          placeholder="description du concert"
+          placeholder="Description du concert"
         ></textarea>
       </div>
-      <div class="form-data-row">
-        <input v-model="newConcert.date" type="datetime">
+      <div class="form-data-row" style="padding-top: 0">
+        <input class="date-selector" type="text" placeholder="Select a date">
       </div>
-      <div class="form-data-row">
-        <label class="label">Salle</label>
+      <div class="form-data-row" id="roomSelectionContainer">
+        <label id="roomLabel" class="label">Salle</label>
         <select v-model="newConcert.venue" required>
           <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
         </select>
@@ -37,6 +37,8 @@
 
 <script>
 import { tokenMixin } from "../../tokenMixin.js";
+import datepicker from 'js-datepicker';
+
 export default {
   name: "NewConcert",
   props: {
@@ -50,6 +52,7 @@ export default {
     };
   },
   mixins: [tokenMixin],
+  mounted: prepareDatePicker,
   methods: {
     async submit(form) {
       await this.refreshToken();
@@ -78,14 +81,26 @@ export default {
     }
   }
 };
+
+function prepareDatePicker() {
+  const picker = datepicker('input.date-selector[type=text]', {
+    onSelect: (instance, date) => {
+      console.warn('ive been selected woohoo', instance, date);
+    }
+  });
+}
+
+
 </script>
 
 <style scoped>
+@import url('./../../../node_modules/js-datepicker/dist/datepicker.min.css');
+
 #newVenue {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 420px;
+  height: 375px;
   width: 495px;
   display: inline-block;
   position: relative;
@@ -113,12 +128,13 @@ div.form-data-row {
   padding: 0.5rem 0 0.3rem 0;
   position: relative;
 }
+
 div.form-data-row > input {
   display: inline-block;
   margin: 0 0.5rem;
   width: calc(100% - 1rem);
   padding-left: 8px;
-  border-radius: 8px;
+  border-radius: 5px;
   height: 43.5px;
   border: 1px solid darkgray;
 }
@@ -131,5 +147,43 @@ div.form-data-row > input:focus {
   outline: none; /* so no rectangle around rounded edges */
   border: 1px solid #0074d9;
 }
+
+textarea {
+  width: calc(100% - 1rem);
+  border-radius: 5px;
+  padding-left: 0.5rem;
+  padding-top: 0.3rem;
+}
+
+#roomLabel {
+  margin-right: 1rem;
+}
+
+#roomLabel + select {
+  min-width: 6rem;
+}
+
+button.btn.btn-primary {
+  margin-right: 1rem;
+  background-color: #2ECC40;
+  border-color: #AAAAAA;
+}
+
+button.btn.btn-primary + button {
+  background-color: rgb(108, 117, 125);
+  border-color: darkgray;
+}
+
+#roomSelectionContainer {
+  margin: 0.3rem 0px 0.5rem 0;
+  text-align: left;
+  padding-left: 0.8rem;
+}
+
+div.control {
+  text-align: left;
+  padding-left: 0.8rem;
+}
+
 </style>
 
