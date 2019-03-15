@@ -70,7 +70,7 @@ export default {
 }
 
 #app.salles, #app.concerts {
-  background: rgba(250,250,250,1);
+  background: rgba(0,0,0,0.1);
 }
 
 #nav {

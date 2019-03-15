@@ -8,6 +8,7 @@
       <div>
         <div class="button-bg"></div>
         <div class="button-bar-bg"></div>
+        <h2 class="instructions">Cliquer ci-dessous pour ajouter un concert</h2>
         <button v-if="!createEditConcert" class="btn btn-primary button" @click="createConcert">Nouveau Concert</button>
         <NewConcert
           v-if="createEditConcert"
@@ -103,13 +104,14 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Raleway');
 
 #imgGuit {
+  display: none;
   width: 100vw;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
-  -webkit-clip-path: polygon(-20% 50%, 100% -40%, 100% 40%, 10% 120%);
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 0% 50%);
   clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 0% 50%);
 }
 
@@ -120,18 +122,20 @@ img#imgSalle {
   top: 0;
   left: 0;
   z-index: 0;
-  -webkit-clip-path: polygon(-20% 50%, 100% -40%, 100% 40%, 10% 120%);
+  -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
   clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
 }
 
 #imgSalleOverlay {
   width: 100vw;
-  height: 100vh;
-  position: fixed;
+  height: 100%;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 0.5;
   background-color: rgba(0,0,0,0.6);
+  -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
 }
 
 h1.page-title {
@@ -162,9 +166,11 @@ h1.page-title {
 #tableContainer > div {
   display: table-cell;
   vertical-align: middle;
+  padding-bottom: 20%;
 }
 
 div.button-bg {
+  display: none;
   width: 10rem;
   height: 10rem;
   border-radius: 5rem;
@@ -179,7 +185,7 @@ div.button-bg {
 div.button-bar-bg {
   width: 100%;
   height: 1.2rem;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0,0,0,1);
   box-shadow: 0px 0px 5px 1px rgba(250,250,250,1);
   position: absolute;
   top: calc(50% - 0.6rem);
@@ -192,6 +198,12 @@ div.venue {
   height: calc(100% - 85px);
 }
 
+h2.instructions {
+  font-family: 'Sniglet', cursive;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+  margin-bottom: 2rem;
+}
+
 .button {
   font-family: 'Sniglet', cursive;
   padding-left: 2rem;
@@ -199,17 +211,16 @@ div.venue {
   background-color: rgba(240, 240, 240, 1);
   border-color: rgba(0,0,0,0.8);
   border-width: 2px;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: rgba(0,0,0,0.8);
   z-index: 3;
   position: relative;
 }
 
 .button:hover {
-  opacity: 0.9;
   background-color: rgba(240, 240, 240, 1);
-  border-color: rgba(0,0,0,0.8);
-  color: black;
+  border-color: #42b983;
+  color: #42b983;
 }
 
 </style>
