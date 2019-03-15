@@ -1,0 +1,7 @@
+django==2.1.7
+djangorestframework==3.9.1
+djangorestframework_simplejwt==3.3
+drf-yasg==1.12.1
+django-cors-headers==2.4.0
+gunicorn==19.9.0
+djongo==1.2.31
