@@ -54,7 +54,11 @@ export default {
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
-    $('#newVenue').slideDown(400);
+    document.querySelector('h2.instructions').classList
+      .replace('visible-instructions', 'hidden-instructions');
+    setTimeout(function() { // allowing 100 ms delay for h2.instructions to start disappearing
+      $('#newVenue').slideDown(800);
+    }, 100);
   },
   beforeRouteLeave(from, to, next) {
     next();
@@ -83,7 +87,9 @@ export default {
     },
     cancel() {
       let that = this;
-      $('#newVenue').slideUp(400, function() {
+      $('#newVenue').slideUp(800, function() {
+        document.querySelector('h2.instructions').classList
+          .replace('hidden-instructions', 'visible-instructions');
         that.$emit("cancelCreateEdit");
       });
     }
@@ -113,7 +119,9 @@ function prepareDatePicker() {
   height: 375px;
   width: 495px;
   display: inline-block;
-  position: relative;
+  position: absolute;
+  top: calc(40% - 187.5px);
+  left: calc(50% - 247.5px);
   z-index: 10;
 }
 

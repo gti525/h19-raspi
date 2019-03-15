@@ -8,7 +8,7 @@
       <div>
         <div class="button-bg"></div>
         <div class="button-bar-bg"></div>
-        <h2 class="instructions">Cliquer ci-dessous pour ajouter un concert</h2>
+        <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2>
         <button v-if="!createEditConcert" class="btn btn-primary button" @click="createConcert">Nouveau Concert</button>
         <NewConcert
           v-if="createEditConcert"
@@ -102,6 +102,36 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Srisakdi');
 @import url('https://fonts.googleapis.com/css?family=Sniglet');
 @import url('https://fonts.googleapis.com/css?family=Raleway');
+
+h2.hidden-instructions {
+  opacity: 0;
+  animation: fade-out;
+  animation-duration: 0.2s;
+}
+
+h2.visible-instructions {
+  opacity: 1;
+  animation: fade-in;
+  animation-duration: 0.2s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 100;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 #imgGuit {
   display: none;
