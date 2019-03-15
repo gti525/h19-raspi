@@ -36,8 +36,11 @@
 </template>
 
 <script>
-import datepicker from 'js-datepicker';
 import $ from "jquery";
+import datetimepicker from 'jquery-datetimepicker';
+// import './../../../node_modules/js-datepicker/dist/datepicker.min.css';
+import './../../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css';
+
 
 export default {
   name: "NewConcert",
@@ -98,10 +101,13 @@ export default {
 
 function prepareDatePicker() {
   let that = this;
-  const picker = datepicker('input.date-selector[type=text]', {
-    onSelect: (instance, date) => {
-      console.log('updating new concert date to: ', date);
-      window.newConcert.date = date;
+
+  const picker = $('input.date-selector[type=text]').datetimepicker({
+    format: 'Y-m-d H:i',
+    inline: false,
+    onChangeDateTime:function(dp, $input) {
+      console.log('updating new concert date to: ', new Date($input.val()).toString());
+      window.newConcert.date = new Date($input.val()).toString();
     }
   });
 }
@@ -110,7 +116,6 @@ function prepareDatePicker() {
 </script>
 
 <style scoped>
-@import url('./../../../node_modules/js-datepicker/dist/datepicker.min.css');
 
 #newVenue {
   background-color: rgba(240, 240, 240, 1);
