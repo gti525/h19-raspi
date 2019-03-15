@@ -55,7 +55,7 @@ export default {
       await this.refreshToken();
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => {},
+          response => { console.debug(response) },
           error => {
             this.errors = error.body;
           }

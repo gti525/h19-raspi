@@ -10,7 +10,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
 
-Vue.http.options.root = "http://localhost:8000";
+Vue.http.options.root = "http://localhost:8080";
 
 Vue.http.interceptors.push((request, next) => {
   let token = JSON.parse(localStorage.getItem("token"));
