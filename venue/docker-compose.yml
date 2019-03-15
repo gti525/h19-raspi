@@ -20,13 +20,12 @@ services:
       - db
     environment:
       DB_TYPE: mysql
-    # command: |
-      # bash -c "bash -s <<EOF
-      # ./utils/wait-for-it.sh db:3306 && \
-      # python manage.py migrate && \
-      # python manage.py runserver 0.0.0.0:8000
-      # EOF"
-    tty: true
+    command: |
+      bash -c "bash -s <<EOF
+      ./utils/wait-for-it.sh db:3306 && \
+      python manage.py migrate && \
+      python manage.py runserver 0.0.0.0:8000
+      EOF"
 
 volumes:
   db_data:
