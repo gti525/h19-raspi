@@ -1,0 +1,89 @@
+---
+- name: Install required packages
+  package:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - dnsmasq
+    - hostapd
+    - bridge-utils
+
+
+- name: Template dhcpcd.conf
+  template:
+    src: dhcpcd.conf.j2
+    dest: /etc/dhcpcd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart dhcpcd
+
+- name: Template dnsmasq.conf
+  template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart dnsmasq
+
+- name: Template hostapd.conf
+  template:
+    src: hostapd.conf.j2
+    dest: /etc/hostapd/hostapd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart hostapd
+
+- name: Add line in file
+  lineinfile:
+    path: /etc/default/hostapd
+    regexp: '^DAEMON_CONF='
+    line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
+  notify:
+    - restart hostapd
+
+- name: Make sure all services are enabled
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - dnsmasq
+    - dhcpcd
+    - hostapd
+
+- name: Copy bridge config file
+  copy:
+      src: br0
+      dest: /etc/network/interfaces.d/br0
+      mode: 0644
+      owner: root
+      group: root
+
+
+- name: Enable IPv4 forwarding
+  sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+- name: Copy iptables rules
+  copy:
+    src: iptables.ipv4.nat
+    dest: /etc/iptables.ipv4.nat
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Enable rule at boot
+  lineinfile:
+    path: /etc/rc.local
+    insertafter: 'exit 0'
+    line: 'iptables-restore < /etc/iptables.ipv4.nat'
+    state: present

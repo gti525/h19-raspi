@@ -1,0 +1,15 @@
+---
+- name: restart dhcpcd
+  service:
+    name: dhcpcd
+    state: restarted
+
+- name: restart dnsmasq
+  service:
+    name: dhcpcd
+    state: restarted
+
+- name: restart hostapd
+  service:
+    name: hostapd
+    state: restarted

@@ -1,0 +1,12 @@
+---
+wifi:
+  ssid: GTI525
+  interface: wlan0
+  hw_mode: g
+  channel: 7
+  passphrase: gti525-raspi
+  ip_addr_cidr: 192.168.7.1/24
+  dhcp_range: 192.168.7.100,192.168.7.250
+  mask: 255.255.255.0
+  lease_time: 24h
+
