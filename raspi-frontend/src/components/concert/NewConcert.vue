@@ -8,7 +8,7 @@
     </div>
     <form id="venueForm" v-on:submit="submit(newConcert)">
       <div class="form-data-row">
-        <input v-model="newConcert.name" type="text" name="name" placeholder="Nom du concert">
+        <input v-model="newConcert.name" type="text" name="name" autocomplete="off" placeholder="Nom du concert">
       </div>
       <div class="form-data-row">
         <textarea
@@ -172,6 +172,12 @@ textarea {
   border-radius: 5px;
   padding-left: 0.5rem;
   padding-top: 0.3rem;
+  resize: none;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: rgb(77, 144, 254);
 }
 
 #roomLabel {
