@@ -15,7 +15,7 @@
         <span>|</span>
         <router-link to="/stats2">Stats2</router-link>
         <span>|</span>
-        <b-button variant="link" @click="logout()" style="color:red">Déconnexion</b-button>
+        <b-button variant="link" @click="logout()" id="logoutBtn">Déconnexion</b-button>
       </div>
     </div>
     <router-view/>
@@ -52,6 +52,14 @@ export default {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+#logoutBtn {
+  padding: 0;
+  margin: 0 1rem;
+  display: inline;
+  color: #ff4136;
+  font-weight: bold;
 }
 
 #app.sign-up {
