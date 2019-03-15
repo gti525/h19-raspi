@@ -25,7 +25,12 @@ SECRET_KEY = 'm0$k2du_@a!*5#astlyh$i_xk3#fcuai4giz4=nj75up+d@ex+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '192.168.7.1',
+    '192.168.7.1:8000'
+]
 
 
 # Application definition
@@ -38,10 +43,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
 
     'ticket_validator',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -81,17 +93,8 @@ WSGI_APPLICATION = 'ticket_validator.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'gti525',
-        # 'ENFORCE_SCHEMA': False,
-        # 'HOST': 'cluster0-shard-00-00-udcfk.mongodb.net',
-        # 'PORT': 27017,
-        # 'USER': 'gperiard',
-        # 'PASSWORD': 'N5CXirxrmc7DrbNp',
-        # 'SSL': True,
-        # 'REPLICASET': 'Cluster0-shard-0',
-        # 'AUTH_SOURCE': 'admin',
-        # 'ENFORCE_SCHEMA': True,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
 
@@ -120,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Montreal'
 
 USE_I18N = True
 

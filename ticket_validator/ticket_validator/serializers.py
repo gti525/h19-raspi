@@ -4,7 +4,7 @@ from .models import Ticket
 
 
 class TicketScanRequest(serializers.Serializer):
-    uuid = serializers.UUIDField()
+    uuid = serializers.CharField()
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -14,6 +14,9 @@ class TicketSerializer(serializers.ModelSerializer):
             'uuid',
             'show',
         )
+
+    def to_representation(self, obj):
+        return obj.uuid
 
 
 class ReceiveTicketSerializer(serializers.Serializer):

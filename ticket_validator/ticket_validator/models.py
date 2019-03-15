@@ -17,10 +17,14 @@ class ScanLog(models.Model):
 
 
 class Ticket(models.Model):
-    uuid = models.UUIDField(editable=False, unique=True)
-    show = models.UUIDField(editable=False)
+    uuid = models.UUIDField(unique=True)
+    show = models.UUIDField()
     scanned = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.ticket_uuid
+        return self.uuid
 
+    class Meta:
+        unique_together = (
+            ('uuid', 'show'),
+        )
