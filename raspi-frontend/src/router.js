@@ -4,6 +4,8 @@ import SignUp from "./views/SignUp.vue";
 import Venue from "./views/Venue.vue";
 import Concert from "./views/Concert.vue";
 import Stats from "./views/Stats.vue";
+import Home from "./views/Home.vue";
+import Stats2 from "./views/Stats2.vue";
 
 Vue.use(Router);
 
@@ -11,8 +13,15 @@ export default new Router({
   routes: [
     {
       path: "/",
+      name: "home",
+      component: Home,
+      props: true
+    },
+    {
+      path: "/signin",
       name: "sign-up",
-      component: SignUp
+      component: SignUp,
+      props: true
     },
     {
       path: "/venues",
@@ -22,7 +31,10 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({ path: "/" });
+          next({
+            name: "sign-up",
+            params: { error: "Veuillez vous connecter avant de poursuivre" }
+          });
         }
       }
     },
@@ -34,7 +46,10 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({ path: "/" });
+          next({
+            name: "sign-up",
+            params: { error: "Veuillez vous connecter avant de poursuivre" }
+          });
         }
       }
     },
@@ -46,7 +61,25 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({ path: "/" });
+          next({
+            name: "sign-up",
+            params: { error: "Veuillez vous connecter avant de poursuivre" }
+          });
+        }
+      }
+    },
+    {
+      path: "/stats2",
+      name: "stats2",
+      component: Stats2,
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({
+            name: "sign-up",
+            params: { error: "Veuillez vous connecter avant de poursuivre" }
+          });
         }
       }
     }

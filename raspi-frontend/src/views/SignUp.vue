@@ -1,5 +1,8 @@
 <template>
   <div id="signUpConainer">
+    <div>
+      <span v-if="error" class="alert alert-danger">{{error}}</span>
+    </div>
     <div v-if="errors">
       <span
         class="alert alert-danger"
@@ -36,6 +39,9 @@
 export default {
   name: "sign-up",
   mounted: onLoad,
+  props: {
+    error: String
+  },
   data() {
     return {
       username: "",

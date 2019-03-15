@@ -1,15 +1,33 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/venues" v-if="isLoggedIn()">Salles</router-link>
-      <span v-if="isLoggedIn()">|</span>
-      <router-link to="/concerts" v-if="isLoggedIn()">Spectacles</router-link>
-      <span v-if="isLoggedIn()">|</span>
-      <router-link to="/stats" v-if="isLoggedIn()">Stats</router-link>
-      <span v-if="isLoggedIn()">|</span>
-      <b-button variant="link" @click="logout()" v-if="isLoggedIn()" style="color:red">Déconnexion</b-button>
+      <div v-if="!isLoggedIn()">
+        <router-link to="/">Home</router-link>
+        <span>|</span>
+        <router-link to="/signin">Connexion</router-link>
+      </div>
+      <div v-if="isLoggedIn()">
+        <router-link to="/venues">Salles</router-link>
+        <span>|</span>
+        <router-link to="/concerts">Spectacles</router-link>
+        <span>|</span>
+        <router-link to="/stats">Stats</router-link>
+        <span>|</span>
+        <router-link to="/stats2">Stats2</router-link>
+        <span>|</span>
+        <b-button variant="link" @click="logout()" style="color:red">Déconnexion</b-button>
+      </div>
     </div>
+
     <router-view/>
+    <footer>
+      <!-- Copyright -->
+      <div class="footer-copyright text-center py-3">
+        © 2019 Copyright:
+        <a href="https://www.facebook.com/eric.boivin.75">GTI525</a>
+      </div>
+      <!-- Copyright -->
+    </footer>
   </div>
 </template>
 

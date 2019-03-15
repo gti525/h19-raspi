@@ -3,7 +3,7 @@
     <div v-for="(concert, index) in concerts" class="card" :key="concert.id">
       <div class="card-body">
         <p>{{concert.name}}</p>
-        <p>{{Date(concert.date)}}</p>
+        <p>{{concert.date | moment("YYYY-MM-DD HH:MM")}}</p>
         <p>{{concert.description}}</p>
         <div v-for="venue in venues" :key="venue.id">
           <p v-if="venue.id === concert.venue">Salle: {{venue.name}}</p>
