@@ -39,6 +39,11 @@ class TicketShowListView(generics.ListAPIView):
         return Ticket.objects.filter(show=show_id)
 
 
+class TicketListView(generics.ListAPIView):
+    serializer_class = TicketSerializer
+    queryset = Ticket.objects.all()
+
+
 class ShowStatsView(APIView):
 
     @swagger_auto_schema(responses={200: ShowStatsSerializer()})

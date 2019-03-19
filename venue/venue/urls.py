@@ -58,4 +58,5 @@ urlpatterns = [
     path('shows/<int:show_id>/stats', views.ShowStatsView.as_view(), name='show-stats'),
     path('venues/', views.VenueListCreateView.as_view(), name='venue-list'),
     path('venues/<int:pk>', views.VenueDetailView.as_view(), name='venue-detail'),
+    path('tickets/', views.TicketListView.as_view(), name='ticket-list'),
 ]

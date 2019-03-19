@@ -18,6 +18,7 @@ class VenueSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    show = ShowSerializer()
     class Meta:
         model = Ticket
         fields = '__all__'

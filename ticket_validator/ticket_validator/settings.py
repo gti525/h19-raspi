@@ -25,6 +25,11 @@ SECRET_KEY = 'm0$k2du_@a!*5#astlyh$i_xk3#fcuai4giz4=nj75up+d@ex+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+VENUE_URL = 'http://10.196.122.38:8080/'
+VENUE_TOKEN = '5041009aade1d416ebbeac4288c12a0543405209'
+
+
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
