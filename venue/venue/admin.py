@@ -1,5 +1,5 @@
-from django.contrib import admin
-from .models import Show, Venue, Ticket
+from django.contrib import admin, messages
+from .models import Show, Venue, Ticket, Seller, ShowPublication
 
 
 class ShowInline(admin.StackedInline):
@@ -22,7 +22,42 @@ class VenueAdmin(admin.ModelAdmin):
     ]
 
 
+def publish_show(modeladmin, request, queryset):
+    for show in queryset:
+        for seller in Seller.objects.all():
+            success, message = seller.create_show(show)
+            if not success:
+                messages.error(request, f'[{seller}] Erreur: {message}')
+            else:
+                messages.success(request, message)
 
-admin.site.register(Show)
+def delete_from_seller(modeladmin, request, queryset):
+    for show in queryset:
+        for seller in Seller.objects.all():
+            success, message = seller.create_show(show)
+            if not success:
+                messages.error(request, f'[{seller}] Erreur: {message}')
+            else:
+                messages.success(request, message)
+
+def send_sale(modeladmin, request, queryset):
+    for show in queryset:
+        for seller in Seller.objects.all():
+            success, message = seller.create_show(show)
+            if not success:
+                messages.error(request, f'[{seller}] Erreur: {message}')
+            else:
+                messages.success(request, message)
+
+class ShowAdmin(admin.ModelAdmin):
+
+    actions = (
+        publish_show,
+    )
+
+
+admin.site.register(Show, ShowAdmin)
 admin.site.register(Venue, VenueAdmin)
 admin.site.register(Ticket)
+admin.site.register(Seller)
+admin.site.register(ShowPublication)

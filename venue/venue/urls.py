@@ -22,6 +22,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 from rest_framework import permissions
+from rest_framework.authtoken.views import obtain_auth_token
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -42,6 +43,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('token-auth', obtain_auth_token),
 
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -1,9 +1,12 @@
 import uuid
-import requests
 
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import gettext as _
+
+
+from venue import clients as seller_clients
 
 
 class Venue(models.Model):
@@ -19,14 +22,22 @@ class Venue(models.Model):
 class Show(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
+    artist = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField()
+    date = models.DateTimeField()
+    image_url = models.CharField(max_length=250, null=True, blank=True)
+
+    ticket_price = models.FloatField()
+
     venue = models.ForeignKey(
         Venue,
         on_delete=models.SET_NULL,
         null=True,
         related_name="shows",
     )
-    date = models.DateTimeField()
+
+    def get_tickets(self):
+        return self.ticket_set.all()
 
     def __str__(self):
         return f'{self.name} | {self.venue}'
@@ -36,7 +47,10 @@ class Show(models.Model):
 def create_tickets(sender, instance, created, **kwargs):
     if created:
         Ticket.objects.bulk_create(
-            [Ticket(show=instance) for i in range(instance.venue.capacity)],
+            [Ticket(
+                show=instance,
+                price=instance.ticket_price,
+            ) for i in range(instance.venue.capacity)],
             batch_size=instance.venue.capacity,
         )
 
@@ -46,6 +60,7 @@ class Ticket(models.Model):
     sold = models.BooleanField(default=False)
     scanned = models.BooleanField(default=False)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    price = models.FloatField()
 
     def __str__(self):
         return f'Ticket {self.uuid} for {self.show}'
@@ -53,23 +68,61 @@ class Ticket(models.Model):
 
 class Seller(models.Model):
     name = models.CharField(max_length=100)
-    url = models.URLField()
+    base_url = models.CharField(max_length=150)
+    token = models.CharField(max_length=150)
+
+    client_class = models.CharField(
+        max_length=100,
+        choices=[
+            (client, client) for client in seller_clients.__all__
+        ],
+    )
 
     def __str__(self):
-        return f'{self.name} - {self.url}'
+        return self.name
 
-    # def send_show_to_url(self, show):
-    #     show = Show.objects.get(id=show)
+    def get_api_client(self):
+        APIClient = getattr(seller_clients, self.client_class)
 
-    #     serializer = ShowTicketSerializer(data=show)
+        return APIClient(
+            url=self.base_url,
+            token=self.token,
+        )
 
-    #     response = requests.post(
-    #         self.url,
-    #         serializer.data
-    #     )
+    def create_show(self, show):
+        client = self.get_api_client()
+        success, message = client.create_show(show)
 
-    #     return response
+        print(success)
+        print(message)
+
+        if not success:
+            return success, message
+
+        ShowPublication.objects.create(
+            show=show,
+            seller=self,
+            status=1,
+        )
+
+        return success, 'Goood'
 
 
+class ShowPublication(models.Model):
+    STATUS = (
+        (0, _('CREATED')),
+        (1, _('ON SALE')),
+        (2, _('SALE ENDED')),
+    )
+
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    status = models.PositiveIntegerField(
+        choices=STATUS,
+        default=0,
+    )
+
+    def __str__(self):
+        return f'[{self.seller}] {self.show}'
 
 
