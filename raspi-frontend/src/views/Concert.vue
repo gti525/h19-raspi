@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%; height: 100%; position: relative">
-    <img id="imgSalle" src="~@/assets/login-bg.jpg"/>
-    <img id="imgGuit" src="~@/assets/guit-bg.jpg"/>
+    <img id="imgSalle" src="~@/assets/login-bg.jpg">
+    <img id="imgGuit" src="~@/assets/guit-bg.jpg">
     <div id="imgSalleOverlay"></div>
     <h1 class="page-title">Spectacles</h1>
     <div id="tableContainer">
@@ -9,7 +9,11 @@
         <div class="button-bg"></div>
         <div class="button-bar-bg"></div>
         <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2>
-        <button v-if="!createEditConcert" class="btn btn-primary button" @click="createConcert">Nouveau Concert</button>
+        <button
+          v-if="!createEditConcert"
+          class="btn btn-primary button"
+          @click="createConcert"
+        >Nouveau Concert</button>
         <NewConcert
           v-if="createEditConcert"
           :newConcert="newConcert"
@@ -24,6 +28,7 @@
             @cancelCreateEdit="cancelCreateEdit"
             @editConcert="editConcert"
             @remove="remove"
+            :resource="resource"
           />
         </div>
       </div>
@@ -86,7 +91,11 @@ export default {
     }
   },
   async created() {
-    this.resource = this.$resource("shows/{id}");
+    let customActions = {
+      publish: { methods: "POST", url: "shows/{id}/publish" },
+      endSale: { methods: "POST", url: "shows/{id}/endsale" }
+    };
+    this.resource = this.$resource("shows/{id}", {}, customActions);
     this.$http.get("venues/").then(response => {
       this.venues = response.body;
     });
@@ -99,9 +108,9 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Acme");
-@import url('https://fonts.googleapis.com/css?family=Srisakdi');
-@import url('https://fonts.googleapis.com/css?family=Sniglet');
-@import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url("https://fonts.googleapis.com/css?family=Srisakdi");
+@import url("https://fonts.googleapis.com/css?family=Sniglet");
+@import url("https://fonts.googleapis.com/css?family=Raleway");
 
 h2.hidden-instructions {
   opacity: 0;
@@ -163,7 +172,7 @@ img#imgSalle {
   top: 0;
   left: 0;
   z-index: 0.5;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
   clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
 }
@@ -174,10 +183,10 @@ h1.page-title {
   left: 0;
   top: 0;
   width: auto;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   text-align: left;
   padding: 0.6rem 1rem;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   box-shadow: 0 0 9px 5px black;
   letter-spacing: 1px;
   font-size: 3rem;
@@ -204,8 +213,8 @@ div.button-bg {
   width: 10rem;
   height: 10rem;
   border-radius: 5rem;
-  background-color: rgba(0,0,0,0.8);
-  box-shadow: 0px 0px 5px 1px rgba(250,250,250,1);
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 0px 5px 1px rgba(250, 250, 250, 1);
   position: absolute;
   top: calc(50% - 5rem);
   left: calc(50% - 5rem);
@@ -215,8 +224,8 @@ div.button-bg {
 div.button-bar-bg {
   width: 100%;
   height: 1.2rem;
-  background-color: rgba(0,0,0,1);
-  box-shadow: 0px 0px 5px 1px rgba(250,250,250,1);
+  background-color: rgba(0, 0, 0, 1);
+  box-shadow: 0px 0px 5px 1px rgba(250, 250, 250, 1);
   position: absolute;
   top: calc(50% - 0.6rem);
   left: 0;
@@ -229,20 +238,20 @@ div.venue {
 }
 
 h2.instructions {
-  font-family: 'Sniglet', cursive;
-  text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+  font-family: "Sniglet", cursive;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
   margin-bottom: 2rem;
 }
 
 .button {
-  font-family: 'Sniglet', cursive;
+  font-family: "Sniglet", cursive;
   padding-left: 2rem;
   padding-right: 2rem;
   background-color: rgba(240, 240, 240, 1);
-  border-color: rgba(0,0,0,0.8);
+  border-color: rgba(0, 0, 0, 0.8);
   border-width: 2px;
   font-size: 1.5rem;
-  color: rgba(0,0,0,0.8);
+  color: rgba(0, 0, 0, 0.8);
   z-index: 3;
   position: relative;
 }
@@ -252,5 +261,4 @@ h2.instructions {
   border-color: #42b983;
   color: #42b983;
 }
-
 </style>
