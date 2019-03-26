@@ -1,2 +1,2 @@
-release: python venue/manage.py migrate
+release: python manage.py migrate
 web: gunicorn venue.wsgi --log-file -
