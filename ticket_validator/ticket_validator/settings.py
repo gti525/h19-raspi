@@ -26,7 +26,7 @@ SECRET_KEY = 'm0$k2du_@a!*5#astlyh$i_xk3#fcuai4giz4=nj75up+d@ex+'
 DEBUG = True
 
 
-VENUE_URL = 'http://10.196.122.38:8080/'
+VENUE_URL = 'http://10.196.122.35:8080/'
 VENUE_TOKEN = '5041009aade1d416ebbeac4288c12a0543405209'
 
 
@@ -47,16 +47,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_yasg',
 
     'ticket_validator',
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+
     )
 }
 
