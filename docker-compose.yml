@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  nginx:
+    build:
+      dockerfile: docker/Dockerfile.nginx
+      context: .
+    ports:
+      - 80:80
+    networks:
+      - gti525-venue
+    depends_on:
+      - uwsgi
   db:
     image: mariadb
     environment:
@@ -10,12 +20,12 @@ services:
             MYSQL_ROOT_PASSWORD: venue
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - gti525-venue
   uwsgi:
-    build: .
-    volumes:
-      - .:/app
-    ports:
-      - "8080:8000"
+    build:
+      dockerfile: docker/Dockerfile.uwsgi
+      context: .
     depends_on:
       - db
     environment:
@@ -24,8 +34,13 @@ services:
       bash -c "bash -s <<EOF
       ./utils/wait-for-it.sh db:3306 && \
       python manage.py migrate && \
-      python manage.py runserver 0.0.0.0:8000
+      uwsgi --socket 0.0.0.0:8000 --wsgi-file venue/wsgi.py
       EOF"
+    networks:
+      - gti525-venue
 
 volumes:
   db_data:
+
+networks:
+  gti525-venue:

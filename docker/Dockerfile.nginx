@@ -1,0 +1,18 @@
+FROM nginx:1.15.9
+
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/uwsgi_params /etc/nginx/conf.d/uwsgi_params
+
+RUN apt-get update && apt-get install curl -y
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
+RUN apt-get install -y nodejs
+
+RUN mkdir /frontend
+COPY raspi-frontend/ /frontend
+
+RUN mkdir /static
+COPY venue/staticfiles /static
+
+WORKDIR /frontend
+RUN npm install
+RUN npm run build
