@@ -6,7 +6,7 @@ services:
       dockerfile: docker/Dockerfile.nginx
       context: .
     ports:
-      - 80:80
+      - 8090:80
     networks:
       - gti525-venue
     depends_on:
