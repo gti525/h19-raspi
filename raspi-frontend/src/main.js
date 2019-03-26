@@ -11,7 +11,7 @@ Vue.use(BootstrapVue);
 Vue.use(VueResource);
 Vue.use(require("vue-moment"));
 
-Vue.http.options.root = "http://localhost:8080";
+Vue.http.options.root = "https://venue-api.lanets.ca";
 
 Vue.http.interceptors.push((request, next) => {
   var token = JSON.parse(localStorage.getItem("token"));

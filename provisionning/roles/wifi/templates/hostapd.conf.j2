@@ -1,6 +1,9 @@
 interface={{ wifi.interface }}
+{% if wifi.bridge_mode %}
 bridge=br0
-{# driver=nl80211 #}
+{% else %}
+driver=nl80211
+{% endif %}
 ssid={{ wifi.ssid }}
 hw_mode={{ wifi.hw_mode }}
 channel={{ wifi.channel }}

@@ -1,5 +1,5 @@
 [pi]
-pi01.infra.lanets.ca ansible_host=172.16.56.186 ansible_user=pi
+pi01.infra.lanets.ca ansible_host=192.168.7.1 ansible_user=pi
 # pi02.infra.lanets.ca
 
 [mongodb:children]

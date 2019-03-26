@@ -1,6 +1,7 @@
 ---
 wifi:
   ssid: GTI525
+  bridge_mode: False
   interface: wlan0
   hw_mode: g
   channel: 7
