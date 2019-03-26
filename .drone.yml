@@ -1,5 +1,8 @@
-pipeline:
-  deploy:
+kind: pipeline
+name: default
+
+steps:
+  - name: deploy
     image: gperiard/docker-compose:latest
     commands:
       - docker-compose build
