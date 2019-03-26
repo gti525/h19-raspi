@@ -8,7 +8,13 @@
     </div>
     <form id="venueForm" v-on:submit="submit(newConcert)">
       <div class="form-data-row">
-        <input v-model="newConcert.name" type="text" name="name" autocomplete="off" placeholder="Nom du concert">
+        <input
+          v-model="newConcert.name"
+          type="text"
+          name="name"
+          autocomplete="off"
+          placeholder="Nom du concert"
+        >
       </div>
       <div class="form-data-row">
         <textarea
@@ -27,6 +33,10 @@
           <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
         </select>
       </div>
+      <div class="form-data-row">
+        <label class="label">Prix du Billet</label>
+        <input v-model="newConcert.ticket_price" type="number" name="price">
+      </div>
       <div class="control">
         <b-button variant="primary" @click="submit(newConcert)">Soumettre</b-button>
         <b-button variant="danger" @click="cancel()">Cancel</b-button>
@@ -37,10 +47,9 @@
 
 <script>
 import $ from "jquery";
-import datetimepicker from 'jquery-datetimepicker';
+import datetimepicker from "jquery-datetimepicker";
 // import './../../../node_modules/js-datepicker/dist/datepicker.min.css';
-import './../../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css';
-
+import "./../../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css";
 
 export default {
   name: "NewConcert",
@@ -57,10 +66,12 @@ export default {
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
-    document.querySelector('h2.instructions').classList
-      .replace('visible-instructions', 'hidden-instructions');
-    setTimeout(function() { // allowing 100 ms delay for h2.instructions to start disappearing
-      $('#newVenue').slideDown(800);
+    document
+      .querySelector("h2.instructions")
+      .classList.replace("visible-instructions", "hidden-instructions");
+    setTimeout(function() {
+      // allowing 100 ms delay for h2.instructions to start disappearing
+      $("#newVenue").slideDown(800);
     }, 100);
   },
   beforeRouteLeave(from, to, next) {
@@ -68,9 +79,12 @@ export default {
   },
   methods: {
     async submit(form) {
+      form.date = this.$moment(form.date).format("YYYY-MM-DDTHH:MM");
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => { console.debug(response) },
+          response => {
+            console.debug(response);
+          },
           error => {
             this.errors = error.body;
           }
@@ -90,9 +104,10 @@ export default {
     },
     cancel() {
       let that = this;
-      $('#newVenue').slideUp(800, function() {
-        document.querySelector('h2.instructions').classList
-          .replace('hidden-instructions', 'visible-instructions');
+      $("#newVenue").slideUp(800, function() {
+        document
+          .querySelector("h2.instructions")
+          .classList.replace("hidden-instructions", "visible-instructions");
         that.$emit("cancelCreateEdit");
       });
     }
@@ -102,21 +117,21 @@ export default {
 function prepareDatePicker() {
   let that = this;
 
-  const picker = $('input.date-selector[type=text]').datetimepicker({
-    format: 'Y-m-d H:i',
+  const picker = $("input.date-selector[type=text]").datetimepicker({
+    format: "Y-m-d H:i",
     inline: false,
-    onChangeDateTime:function(dp, $input) {
-      console.log('updating new concert date to: ', new Date($input.val()).toString());
+    onChangeDateTime: function(dp, $input) {
+      console.log(
+        "updating new concert date to: ",
+        new Date($input.val()).toString()
+      );
       window.newConcert.date = new Date($input.val()).toString();
     }
   });
 }
-
-
 </script>
 
 <style scoped>
-
 #newVenue {
   background-color: rgba(240, 240, 240, 1);
   border-radius: 2rem;
@@ -195,8 +210,8 @@ textarea:focus {
 
 button.btn.btn-primary {
   margin-right: 1rem;
-  background-color: #2ECC40;
-  border-color: #AAAAAA;
+  background-color: #2ecc40;
+  border-color: #aaaaaa;
 }
 
 button.btn.btn-primary + button {
@@ -214,6 +229,5 @@ div.control {
   text-align: left;
   padding-left: 0.8rem;
 }
-
 </style>
 

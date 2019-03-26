@@ -8,6 +8,7 @@
         <div v-for="venue in venues" :key="venue.id">
           <p v-if="venue.id === concert.venue">Salle: {{venue.name}}</p>
         </div>
+        <p>Prix: {{concert.ticket_price}}$</p>
         <b-button variant="primary" @click="edit(concert)">Modifier</b-button>
         <b-button variant="danger" @click="remove(concert, index)">Effacer</b-button>
         <b-button variant="success" @click="publish(concert)">Publier</b-button>
