@@ -2,13 +2,9 @@ pipeline:
   deploy:
     image: gperiard/docker-compose:latest
     commands:
-    - docker-compose build
-    - docker-compose restart
+      - docker-compose build
+      - docker-compose restart
     volumes:
     - name: docker
-      path: /var/run/docker.sock
-
-volumes:
-- name: docker
-  host:
-    path: /var/run/docker.sock
+      host:
+        path: /var/run/docker.sock
