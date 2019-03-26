@@ -1,0 +1,6 @@
+pipeline:
+  deploy:
+    image: gperiard/docker-compose:latest
+    commands:
+      - docker-compose build
+      - docker-compose restart

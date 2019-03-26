@@ -26,21 +26,23 @@ SECRET_KEY = 'm0$k2du_@a!*5#astlyh$i_xk3#fcuai4giz4=nj75up+d@ex+'
 DEBUG = True
 
 
-VENUE_URL = 'http://10.196.122.35:8080/'
-VENUE_TOKEN = '5041009aade1d416ebbeac4288c12a0543405209'
+VENUE_URL = 'https://venue-api.lanets.ca/'
+VENUE_TOKEN = 'b9ad8134fdc5efb5afde424024b0367ac55e0ae6'
 
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '192.168.7.1',
-    '192.168.7.1:8000'
+    '192.168.7.1:8000',
+    '172.16.56.139',
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,6 +71,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

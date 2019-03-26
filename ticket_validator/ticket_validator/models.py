@@ -13,7 +13,7 @@ class ScanLog(models.Model):
     status = models.CharField(choices=SCAN_STATUS, max_length=4)
 
     def __str__(self):
-        return self.ticket_uuid
+        return str(self.ticket_uuid)
 
 
 class Ticket(models.Model):
@@ -22,7 +22,7 @@ class Ticket(models.Model):
     scanned = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.uuid
+        return str(self.uuid)
 
     class Meta:
         unique_together = (
