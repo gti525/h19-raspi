@@ -10,6 +10,8 @@
         </div>
         <b-button variant="primary" @click="edit(concert)">Modifier</b-button>
         <b-button variant="danger" @click="remove(concert, index)">Effacer</b-button>
+        <b-button variant="success" @click="publish(concert)">Publier</b-button>
+        <b-button variant="info" @click="endSale(concert)">Fermer Vente</b-button>
       </div>
     </div>
   </div>
@@ -20,7 +22,8 @@ export default {
   name: "ShowConcerts",
   props: {
     concerts: Array,
-    venues: Array
+    venues: Array,
+    resource: Object
   },
   methods: {
     edit(concert) {
@@ -29,6 +32,20 @@ export default {
     },
     remove(concert, index) {
       this.$emit("remove", { concert: concert, index: index });
+    },
+    publish(concert) {
+      this.resource.publish({ id: concert.id }).then(response => {
+        if (response.status === 200) {
+          //TODO
+        }
+      });
+    },
+    endSale(concert) {
+      this.resource.endSale({ id: concert.id }).then(response => {
+        if (response.status === 200) {
+          //TODO
+        }
+      });
     }
   }
 };
