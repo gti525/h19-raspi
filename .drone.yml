@@ -9,7 +9,5 @@ steps:
       - docker-compose restart
     environment:
       DOCKER_HOST: http+unix://var/run/docker.sock
-    volumes:
-    - name: docker
-      host:
-        path: /var/run/docker.sock
+    volume:
+      - /var/run/docker.sock:/var/run/docker.sock
