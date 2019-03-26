@@ -4,3 +4,6 @@ pipeline:
     commands:
       - docker-compose build
       - docker-compose restart
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
