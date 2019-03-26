@@ -7,7 +7,7 @@ steps:
     commands:
       - docker-compose build
       - docker-compose restart
-    env:
+    environment:
       DOCKER_HOST: /var/run/docker.sock
     volumes:
     - name: docker
