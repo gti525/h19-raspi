@@ -3,6 +3,8 @@ import BootstrapVue from "bootstrap-vue";
 import App from "./App.vue";
 import router from "./router";
 import VueResource from "vue-resource";
+import Notifications from "vue-notification";
+import Vuelidate from "vuelidate";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -10,6 +12,8 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
 Vue.use(require("vue-moment"));
+Vue.use(Notifications);
+Vue.use(Vuelidate);
 
 Vue.http.options.root = "https://venue-api.lanets.ca";
 
@@ -35,7 +39,6 @@ Vue.http.interceptors.push((request, next) => {
                   localStorage.setItem("token", JSON.stringify(token));
                 },
                 function(err) {
-                  console.log(err);
                   localStorage.removeItem("token");
                   Vue.router.push({
                     name: "home",

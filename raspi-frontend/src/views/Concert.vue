@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%; position: relative">
+  <div class="body">
     <img id="imgSalle" src="~@/assets/login-bg.jpg">
     <img id="imgGuit" src="~@/assets/guit-bg.jpg">
     <div id="imgSalleOverlay"></div>
@@ -112,6 +112,12 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Sniglet");
 @import url("https://fonts.googleapis.com/css?family=Raleway");
 
+div.body {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: table;
+}
 h2.hidden-instructions {
   opacity: 0;
   animation: fade-out;

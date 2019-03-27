@@ -1,11 +1,6 @@
 <template>
-  <div id="newVenue" style="display: none">
+  <div id="newVenue">
     <h2>Créer un Concert</h2>
-    <div v-if="errors">
-      <div v-for="(value, key) in errors" :key="key">
-        <span class="alert alert-danger">{{value}}</span>
-      </div>
-    </div>
     <form id="venueForm" v-on:submit="submit(newConcert)">
       <div class="form-data-row">
         <input
@@ -24,7 +19,7 @@
           placeholder="Description du concert"
         ></textarea>
       </div>
-      <div class="form-data-row" style="padding-top: 0">
+      <div class="form-data-row">
         <input class="date-selector" type="text" placeholder="Date du concert">
       </div>
       <div class="form-data-row" id="roomSelectionContainer">
@@ -38,7 +33,7 @@
         <input v-model="newConcert.ticket_price" type="number" name="price">
       </div>
       <div class="control">
-        <b-button variant="primary" @click="submit(newConcert)">Soumettre</b-button>
+        <b-button variant="primary" @click="submit()">Soumettre</b-button>
         <b-button variant="danger" @click="cancel()">Cancel</b-button>
       </div>
     </form>
@@ -50,6 +45,7 @@ import $ from "jquery";
 import datetimepicker from "jquery-datetimepicker";
 // import './../../../node_modules/js-datepicker/dist/datepicker.min.css';
 import "./../../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css";
+import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "NewConcert",
@@ -62,6 +58,15 @@ export default {
     return {
       errors: {}
     };
+  },
+  validations: {
+    newConcert: {
+      name: { required, min: minLength(4) },
+      description: { required },
+      venue: { required },
+      ticket_price: { required },
+      date: { required }
+    }
   },
   mounted: function() {
     prepareDatePicker();
@@ -78,26 +83,55 @@ export default {
     next();
   },
   methods: {
-    async submit(form) {
-      form.date = this.$moment(form.date).format("YYYY-MM-DDTHH:MM");
-      if (form.id) {
-        this.resource.update({ id: form.id }, form).then(
+    async submit() {
+      newConcert.date = this.$moment(newConcert.date).format(
+        "YYYY-MM-DDTHH:MM"
+      );
+      if (newConcert.id) {
+        this.resource.update({ id: newConcert.id }, newConcert).then(
           response => {
-            console.debug(response);
+            if (response.status === 200) {
+              this.$notify({
+                group: "foo",
+                title: "Réussi!",
+                text: "Spectacle modifié avec succès!",
+                type: "success"
+              });
+            }
           },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
         this.$emit("cancelCreateEdit");
       } else {
-        this.resource.save({}, form).then(
+        this.resource.save({}, newConcert).then(
           response => {
             if (response.status === 201)
-              this.$emit("cancelCreateEdit", response.body);
+              this.$notify({
+                group: "foo",
+                title: "Réussi!",
+                text: "Spectacle créé avec succès",
+                type: "success"
+              });
+            this.$emit("cancelCreateEdit", response.body);
           },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
       }
@@ -121,10 +155,6 @@ function prepareDatePicker() {
     format: "Y-m-d H:i",
     inline: false,
     onChangeDateTime: function(dp, $input) {
-      console.log(
-        "updating new concert date to: ",
-        new Date($input.val()).toString()
-      );
       window.newConcert.date = new Date($input.val()).toString();
     }
   });
