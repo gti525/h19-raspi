@@ -2,14 +2,14 @@
   <div style="width: 100%; height: 100%; position: relative; display: table">
     <h1 class="page-title">Salles de spectacles</h1>
     <div class="venue">
-      <button v-if="!createEditVenue" class="btn btn-primary button" @click="createVenue">Nouvelle salle</button>
+      <button class="btn btn-primary button" @click="createVenue" id="newVenueBtn">Nouvelle salle</button>
       <NewVenue
         v-if="createEditVenue"
         :newVenue="newForm"
         :resource="resource"
         @cancelCreateEdit="cancelCreateEdit"
       />
-      <div class="col-md-6 mx-auto">
+      <div class="col-md-12 mx-auto show-venue-container">
         <ShowVenue :venues="venues" @cancelCreateEdit="cancelCreateEdit" @editVenue="editVenue"/>
       </div>
     </div>
@@ -37,7 +37,6 @@ export default {
   },
   mounted: function() {
     document.getElementById("app").classList.add("salles");
-    document.querySelector('button.btn-primary').click();
   },
   beforeRouteLeave: function(from, to, next) {
     document.getElementById("app").classList.remove("salles");
@@ -66,6 +65,7 @@ export default {
     this.resource = this.$resource("venues/{id}");
     this.resource.get().then(response => {
       this.venues = response.body;
+      console.debug(this.venues);
     });
   }
 };
@@ -115,6 +115,19 @@ h1.page-title {
   background-color: rgba(240, 240, 240, 1);
   border-color: rgba(0,0,0,0.8);
   color: black;
+}
+
+div.show-venue-container {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 6rem;
+  padding-left: 0
+}
+
+#newVenueBtn {
+  position: absolute;
+  right: 5rem;
+  top: 1.2rem;
 }
 
 </style>
