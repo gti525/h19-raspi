@@ -1,4 +1,6 @@
 <template>
+<div>
+  <div id="newVenueOverlay"></div>
   <div id="newVenue" style="display: none">
     <h2>Créer une salle</h2>
     <div v-if="errors">
@@ -29,6 +31,7 @@
       </div>
     </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -50,6 +53,8 @@ export default {
   },
   mounted: function() {
     $('#newVenue').slideDown(400);
+    document.getElementById('newVenueOverlay').classList.remove('hidden-overlay');
+    document.getElementById('newVenueOverlay').classList.add('visible-overlay');
   },
   methods: {
     async submit(form) {
@@ -64,7 +69,7 @@ export default {
         this.$emit("cancelCreateEdit");
       } else {
         this.resource.save({}, form).then(
-          response => {
+            response => {
             this.$emit("cancelCreateEdit", response.body);
           },
           error => {
@@ -73,25 +78,66 @@ export default {
         );
       }
     },
-  cancel() {
-    let that = this;
-    $('#newVenue').slideUp(400, function() {
-      that.$emit("cancelCreateEdit");
-    });
+    cancel() {
+      let that = this;
+      $('#newVenue').slideUp(400, function() {
+        that.$emit("cancelCreateEdit");
+      });
+      document.getElementById('newVenueOverlay')
+        .classList.replace('visible-overlay', 'hidden-overlay');
     }
   }
 };
 </script>
 <style scoped>
+#newVenueOverlay {
+  position: absolute;
+  z-index: 19;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.75);
+}
+
+#newVenueOverlay.visible-overlay {
+  animation: fade-in;
+  animation-duration: 0.5s;
+}
+
+#newVenueOverlay.hidden-overlay {
+  animation: fade-out;
+  animation-duration: 0.5s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 #newVenue {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(250, 250, 250, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
   height: 450px;
   width: 495px;
   display: inline-block;
-  position: relative;
   border: 3px solid black;
+  position: absolute;
+  z-index: 20;
+  left: calc(50% - 247px);
+  top: 5rem;
 }
 
 #newVenue > h2,
