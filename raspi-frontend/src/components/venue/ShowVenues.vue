@@ -38,27 +38,6 @@
       </div>
       <b-button variant="primary" @click="edit(venue)">Modifier</b-button> -->
     </div>
-
-    <!-- <div class="card-body">
-      <h2>{{venue.name}}</h2>
-      <p>Adresse: {{venue.address}}</p>
-      <p>Capacité: {{venue.capacity}} personnes</p>
-      <div v-if="venue.shows.length !== 0">
-        <h4>Spectacles:</h4>
-        <div v-for="show in ordered(venue.shows)" :key="show.id">
-          <div>
-            <p>
-              {{show.name}}&nbsp;
-              <span class="passed-event" v-if="hasDatePassed(show.date)">passé</span>
-              <span class="upcoming-event" v-if="!hasDatePassed(show.date)">à venir</span>
-              <br>
-              {{show.date | moment("YYYY-MM-DD HH:MM")}}
-            </p>
-          </div>
-        </div>
-      </div>
-      <b-button variant="primary" @click="edit(venue)">Modifier</b-button>
-    </div> -->
   </div>
 </template>
 
