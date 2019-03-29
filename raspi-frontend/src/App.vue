@@ -20,6 +20,7 @@
     </div>
 
     <router-view/>
+    <notifications group="foo"/>
     <footer>
       <!-- Copyright -->
       <div class="footer-copyright text-center py-3">
@@ -46,7 +47,6 @@ export default {
 </script>
 
 <style>
-
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -86,8 +86,9 @@ export default {
   width: 100vw;
 }
 
-#app.salles, #app.concerts {
-  background: rgba(0,0,0,0.1);
+#app.salles,
+#app.concerts {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 #nav {

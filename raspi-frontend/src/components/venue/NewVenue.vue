@@ -1,11 +1,6 @@
 <template>
-  <div id="newVenue" style="display: none">
+  <div id="newVenue">
     <h2>Créer une salle</h2>
-    <div v-if="errors">
-      <div v-for="(value, key) in errors" :key="key">
-        <span class="alert alert-danger">{{key}}: {{value}}</span>
-      </div>
-    </div>
     <form id="venueForm" v-on:submit="submit(newVenue)">
       <div class="form-data-row">
         <input v-model="newVenue.name" type="text" name="name" placeholder="nom">
@@ -49,35 +44,64 @@ export default {
     };
   },
   mounted: function() {
-    $('#newVenue').slideDown(400);
+    $("#newVenue").slideDown(400);
   },
   methods: {
     async submit(form) {
       form.address = this.street + ", " + this.city + ", " + this.postalCode;
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => {},
+          response => {
+            if (response.status === 200) {
+              this.$notify({
+                group: "foo",
+                title: "Réussi!",
+                text: "Salle modifié avec succès!",
+                type: "success"
+              });
+            }
+          },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
         this.$emit("cancelCreateEdit");
       } else {
         this.resource.save({}, form).then(
           response => {
+            this.$notify({
+              group: "foo",
+              title: "Réussi!",
+              text: "Spectacle créé avec succès",
+              type: "success"
+            });
             this.$emit("cancelCreateEdit", response.body);
           },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
       }
     },
-  cancel() {
-    let that = this;
-    $('#newVenue').slideUp(400, function() {
-      that.$emit("cancelCreateEdit");
-    });
+    cancel() {
+      let that = this;
+      $("#newVenue").slideUp(400, function() {
+        that.$emit("cancelCreateEdit");
+      });
     }
   }
 };
@@ -116,8 +140,8 @@ button.btn {
 
 button.btn.btn-primary {
   margin-right: 1rem;
-  background-color: #2ECC40;
-  border-color: #AAAAAA;
+  background-color: #2ecc40;
+  border-color: #aaaaaa;
 }
 
 button.btn.btn-primary + button {
