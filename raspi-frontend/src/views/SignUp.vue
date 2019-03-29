@@ -8,7 +8,7 @@
       <div class="side-panel right-panel">
         <div id="signUpFormContainer">
           <h2>Connexion</h2>
-          <form id="signUpForm" v-on:submit="onSubmit()">
+          <form id="signUpForm" v-on:submit.prevent="onSubmit()">
             <div class="form-data-row">
               <input type="text" v-model="username" placeholder="Nom d'utilisateur">
             </div>
@@ -16,7 +16,7 @@
               <input type="password" v-model="password" placeholder="Nouveau mot de passe">
             </div>
             <div id="signUpBtnContainer">
-              <b-button type="submit" size="lg" @click="onSubmit()" id="signUpBtn">Connecter</b-button>
+              <b-button type="submit" size="lg" id="signUpBtn">Connecter</b-button>
             </div>
           </form>
         </div>

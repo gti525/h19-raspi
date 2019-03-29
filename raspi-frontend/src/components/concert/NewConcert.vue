@@ -1,7 +1,7 @@
 <template>
-  <div id="newVenue">
+  <div id="newConcert">
     <h2>Créer un Concert</h2>
-    <form id="venueForm" v-on:submit="submit(newConcert)">
+    <form id="venueForm" v-on:submit.prevent="submit()">
       <div class="form-data-row">
         <input
           v-model="newConcert.name"
@@ -54,11 +54,7 @@ export default {
     resource: Object,
     venues: Array
   },
-  data: () => {
-    return {
-      errors: {}
-    };
-  },
+  data: () => {},
   validations: {
     newConcert: {
       name: { required, min: minLength(4) },
@@ -66,29 +62,24 @@ export default {
       venue: { required },
       ticket_price: { required },
       date: { required }
-    }
+    },
+    name: { required }
   },
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
-    document
-      .querySelector("h2.instructions")
-      .classList.replace("visible-instructions", "hidden-instructions");
-    setTimeout(function() {
-      // allowing 100 ms delay for h2.instructions to start disappearing
-      $("#newVenue").slideDown(800);
-    }, 100);
+    $("#newConcert").slideDown(800);
   },
   beforeRouteLeave(from, to, next) {
     next();
   },
   methods: {
     async submit() {
-      newConcert.date = this.$moment(newConcert.date).format(
+      this.newConcert.date = this.$moment(this.newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
       );
-      if (newConcert.id) {
-        this.resource.update({ id: newConcert.id }, newConcert).then(
+      if (this.newConcert.id) {
+        this.resource.update({ id: newConcert.id }, this.newConcert).then(
           response => {
             if (response.status === 200) {
               this.$notify({
@@ -124,6 +115,7 @@ export default {
             this.$emit("cancelCreateEdit", response.body);
           },
           error => {
+            console.log(error);
             for (const [key, value] of Object.entries(error.body)) {
               this.$notify({
                 group: "foo",
@@ -138,10 +130,7 @@ export default {
     },
     cancel() {
       let that = this;
-      $("#newVenue").slideUp(800, function() {
-        document
-          .querySelector("h2.instructions")
-          .classList.replace("hidden-instructions", "visible-instructions");
+      $("#newConcert").slideUp(800, function() {
         that.$emit("cancelCreateEdit");
       });
     }
@@ -162,80 +151,35 @@ function prepareDatePicker() {
 </script>
 
 <style scoped>
-#newVenue {
-  background-color: rgba(240, 240, 240, 1);
+#newConcert {
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 375px;
+  height: 450px;
   width: 495px;
   display: inline-block;
-  position: absolute;
-  top: calc(40% - 187.5px);
-  left: calc(50% - 247.5px);
-  z-index: 10;
+  position: relative;
+  border: 3px solid black;
 }
 
-#newVenue > h2,
-#newVenue > h5 {
+#newConcert > h2,
+#newConcert > h5 {
   text-align: left;
   padding-left: 0.5rem;
 }
 
-#newVenue > h2 {
+#newConcert > h2 {
   margin-top: 0.5rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-#newVenue > h5 {
+#newConcert > h5 {
   margin-bottom: 1rem;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
 }
 
-div.form-data-row {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0 0.3rem 0;
-  position: relative;
-}
-
-div.form-data-row > input {
-  display: inline-block;
-  margin: 0 0.5rem;
-  width: calc(100% - 1rem);
-  padding-left: 8px;
-  border-radius: 5px;
-  height: 43.5px;
-  border: 1px solid darkgray;
-}
-
-div.form-data-row > input.invalid-form-data {
-  border: 1px solid #ff4136 !important;
-}
-
-div.form-data-row > input:focus {
-  outline: none; /* so no rectangle around rounded edges */
-  border: 1px solid #0074d9;
-}
-
-textarea {
-  width: calc(100% - 1rem);
-  border-radius: 5px;
-  padding-left: 0.5rem;
-  padding-top: 0.3rem;
-  resize: none;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: rgb(77, 144, 254);
-}
-
-#roomLabel {
-  margin-right: 1rem;
-}
-
-#roomLabel + select {
-  min-width: 6rem;
+button.btn {
+  margin-top: 0.5rem;
 }
 
 button.btn.btn-primary {
@@ -249,15 +193,29 @@ button.btn.btn-primary + button {
   border-color: darkgray;
 }
 
-#roomSelectionContainer {
-  margin: 0.3rem 0px 0.5rem 0;
-  text-align: left;
-  padding-left: 0.8rem;
+div.form-data-row {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0 0.3rem 0;
+  position: relative;
+}
+div.form-data-row > input {
+  display: inline-block;
+  margin: 0 0.5rem;
+  width: calc(100% - 1rem);
+  padding-left: 8px;
+  border-radius: 8px;
+  height: 43.5px;
+  border: 1px solid darkgray;
 }
 
-div.control {
-  text-align: left;
-  padding-left: 0.8rem;
+div.form-data-row > input.invalid-form-data {
+  border: 1px solid #ff4136 !important;
+}
+
+div.form-data-row > input:focus {
+  outline: none; /* so no rectangle around rounded edges */
+  border: 1px solid #0074d9;
 }
 </style>
 

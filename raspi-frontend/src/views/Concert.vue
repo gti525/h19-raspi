@@ -1,36 +1,32 @@
 <template>
   <div class="body">
-    <img id="imgSalle" src="~@/assets/login-bg.jpg">
-    <img id="imgGuit" src="~@/assets/guit-bg.jpg">
-    <div id="imgSalleOverlay"></div>
+    <div id="imgSalleOverlay">
+      <img id="imgSalle" src="~@/assets/login-bg.jpg">
+      <img id="imgGuit" src="~@/assets/guit-bg.jpg">
+    </div>
     <h1 class="page-title">Spectacles</h1>
-    <div id="tableContainer">
-      <div>
-        <div class="button-bg"></div>
-        <div class="button-bar-bg"></div>
-        <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2>
-        <button
-          v-if="!createEditConcert"
-          class="btn btn-primary button"
-          @click="createConcert"
-        >Nouveau Concert</button>
-        <NewConcert
-          v-if="createEditConcert"
-          :newConcert="newConcert"
-          @cancelCreateEdit="cancelCreateEdit"
-          :resource="resource"
+    <div class="concert">
+      <button
+        v-if="!createEditConcert"
+        class="btn btn-primary button"
+        @click="createConcert"
+      >Nouveau Spectacle</button>
+      <NewConcert
+        v-if="createEditConcert"
+        :newConcert.sync="newConcert"
+        @cancelCreateEdit="cancelCreateEdit"
+        :resource="resource"
+        :venues="venues"
+      />
+      <div class="col-md-6 mx-auto">
+        <ShowConcerts
+          :concerts="concerts"
           :venues="venues"
+          @cancelCreateEdit="cancelCreateEdit"
+          @editConcert="editConcert"
+          @remove="remove"
+          :resource="resource"
         />
-        <div class="col-md-6 mx-auto button">
-          <ShowConcerts
-            :concerts="concerts"
-            :venues="venues"
-            @cancelCreateEdit="cancelCreateEdit"
-            @editConcert="editConcert"
-            @remove="remove"
-            :resource="resource"
-          />
-        </div>
       </div>
     </div>
   </div>
@@ -69,7 +65,8 @@ export default {
         name: "",
         date: new Date(),
         description: "",
-        venue: this.venues[0]
+        venue: this.venues[0],
+        ticket_price: 0
       };
     },
     cancelCreateEdit(concert) {
@@ -118,6 +115,29 @@ div.body {
   position: relative;
   display: table;
 }
+div.concert {
+  width: 100%;
+  display: table-row;
+}
+
+h1.page-title {
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: auto;
+  font-family: "Raleway", sans-serif;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 9px 5px black;
+  letter-spacing: 1px;
+  font-size: 3rem;
+  z-index: 1;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+}
+
 h2.hidden-instructions {
   opacity: 0;
   animation: fade-out;
@@ -146,6 +166,26 @@ h2.visible-instructions {
   100% {
     opacity: 0;
   }
+}
+
+.button {
+  font-family: "Sniglet", cursive;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  background-color: rgba(240, 240, 240, 1);
+  border-color: rgba(0, 0, 0, 0.8);
+  border-width: 2px;
+  font-size: 1.2rem;
+  color: rgba(0, 0, 0, 0.8);
+  z-index: 3;
+  position: relative;
+}
+
+.button:hover {
+  opacity: 0.9;
+  background-color: rgba(240, 240, 240, 1);
+  border-color: rgba(0, 0, 0, 0.8);
+  color: black;
 }
 
 #imgGuit {

@@ -53,7 +53,7 @@ Vue.http.interceptors.push((request, next) => {
     }
   }
   next(response => {
-    if (response.status === 400) {
+    if (response.status === 400 && !removeAuthHeaders) {
       Vue.http
         .post("api/token/refresh/", { refresh: token.refresh })
         .then(result => {
