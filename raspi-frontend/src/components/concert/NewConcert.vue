@@ -1,4 +1,6 @@
 <template>
+<div>
+  <div id="newConcertOverlay"></div>
   <div id="newVenue" style="display: none">
     <h2>Créer un Concert</h2>
     <div v-if="errors">
@@ -28,14 +30,13 @@
         <input class="date-selector" type="text" placeholder="Date du concert">
       </div>
       <div class="form-data-row" id="roomSelectionContainer">
-        <label id="roomLabel" class="label">Salle</label>
-        <select v-model="newConcert.venue" required>
+        <select @change=onVenueChange v-model="selected" required>
+          <option disabled value="">Salle de Spectacle</option>
           <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
         </select>
       </div>
       <div class="form-data-row">
-        <label class="label">Prix du Billet</label>
-        <input v-model="newConcert.ticket_price" type="number" name="price">
+        <input placeholder="Prix du Billet" v-model="newConcert.ticket_price" type="number" name="price">
       </div>
       <div class="control">
         <b-button variant="primary" @click="submit(newConcert)">Soumettre</b-button>
@@ -43,6 +44,7 @@
       </div>
     </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -60,19 +62,16 @@ export default {
   },
   data: () => {
     return {
+      selected: '',
       errors: {}
     };
   },
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
-    document
-      .querySelector("h2.instructions")
-      .classList.replace("visible-instructions", "hidden-instructions");
-    setTimeout(function() {
-      // allowing 100 ms delay for h2.instructions to start disappearing
-      $("#newVenue").slideDown(800);
-    }, 100);
+    $("#newVenue").slideDown(400);
+    document.getElementById('newConcertOverlay').classList.remove('hidden-overlay');
+    document.getElementById('newConcertOverlay').classList.add('visible-overlay');
   },
   beforeRouteLeave(from, to, next) {
     next();
@@ -104,12 +103,14 @@ export default {
     },
     cancel() {
       let that = this;
-      $("#newVenue").slideUp(800, function() {
-        document
-          .querySelector("h2.instructions")
-          .classList.replace("hidden-instructions", "visible-instructions");
+      $("#newVenue").slideUp(400, function() {
         that.$emit("cancelCreateEdit");
       });
+      document.getElementById('newConcertOverlay')
+        .classList.replace('visible-overlay', 'hidden-overlay');
+    },
+    onVenueChange() {
+      document.querySelector('#roomSelectionContainer > select').classList.add('valid-selection');
     }
   }
 };
@@ -132,17 +133,55 @@ function prepareDatePicker() {
 </script>
 
 <style scoped>
+
+#newConcertOverlay {
+  position: absolute;
+  z-index: 19;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.75);
+}
+
+#newConcertOverlay.visible-overlay {
+  animation: fade-in;
+  animation-duration: 0.5s;
+}
+
+#newConcertOverlay.hidden-overlay {
+  animation: fade-out;
+  animation-duration: 0.5s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 #newVenue {
-  background-color: rgba(240, 240, 240, 1);
+  background-color: rgba(250, 250, 250, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 375px;
+  height: 450px;
   width: 495px;
   display: inline-block;
+  border: 3px solid black;
   position: absolute;
-  top: calc(40% - 187.5px);
-  left: calc(50% - 247.5px);
-  z-index: 10;
+  z-index: 20;
+  left: calc(50% - 247px);
+  top: 5rem;
 }
 
 #newVenue > h2,
@@ -168,7 +207,7 @@ div.form-data-row {
   position: relative;
 }
 
-div.form-data-row > input {
+div.form-data-row > input, #roomSelectionContainer > select {
   display: inline-block;
   margin: 0 0.5rem;
   width: calc(100% - 1rem);
@@ -178,11 +217,19 @@ div.form-data-row > input {
   border: 1px solid darkgray;
 }
 
+#roomSelectionContainer > select:not(.valid-selection) {
+  color: gray;
+}
+
+#roomSelectionContainer > select > option:not(:first-child) {
+  color: black;
+}
+
 div.form-data-row > input.invalid-form-data {
   border: 1px solid #ff4136 !important;
 }
 
-div.form-data-row > input:focus {
+div.form-data-row > input:focus, #roomSelectionContainer > select:focus {
   outline: none; /* so no rectangle around rounded edges */
   border: 1px solid #0074d9;
 }
@@ -200,14 +247,6 @@ textarea:focus {
   border-color: rgb(77, 144, 254);
 }
 
-#roomLabel {
-  margin-right: 1rem;
-}
-
-#roomLabel + select {
-  min-width: 6rem;
-}
-
 button.btn.btn-primary {
   margin-right: 1rem;
   background-color: #2ecc40;
@@ -219,15 +258,10 @@ button.btn.btn-primary + button {
   border-color: darkgray;
 }
 
-#roomSelectionContainer {
-  margin: 0.3rem 0px 0.5rem 0;
-  text-align: left;
-  padding-left: 0.8rem;
-}
-
 div.control {
   text-align: left;
   padding-left: 0.8rem;
+  padding-top: 18px;
 }
 </style>
 
