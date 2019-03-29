@@ -76,7 +76,7 @@ export default {
               this.$notify({
                 group: "foo",
                 title: "Réussi!",
-                text: "Salle modifié avec succès!",
+                text: "Salle modifiée avec succès!",
                 type: "success"
               });
             }
@@ -99,7 +99,7 @@ export default {
             this.$notify({
               group: "foo",
               title: "Réussi!",
-              text: "Spectacle créé avec succès",
+              text: "Salle créée avec succès",
               type: "success"
             });
             this.$emit("cancelCreateEdit", response.body);
