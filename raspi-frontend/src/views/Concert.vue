@@ -79,12 +79,12 @@ export default {
       this.newConcert = concert;
     },
     async remove(concertArray) {
-      await this.refreshToken();
-      this.resource.remove({ id: concertArray.concert.id }).then(response => {
-        if (response.status === "204") {
-          this.$delete(this.concerts, concertArray.index);
-        }
-      });
+      if (confirm("Êtes-vous certain?"))
+        this.resource.remove({ id: concertArray.concert.id }).then(response => {
+          if (response.status === "204") {
+            this.$delete(this.concerts, concertArray.index);
+          }
+        });
     }
   },
   async created() {
