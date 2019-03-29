@@ -57,7 +57,9 @@ export default {
     venues: Array
   },
   data: () => {
-    selected: ''
+    return {
+      selected: ''
+    }
   },
   validations: {
     newConcert: {
@@ -84,6 +86,7 @@ export default {
       this.newConcert.date = this.$moment(newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
       );
+      this.newConcert.venue = this.selected;
       if (this.newConcert.id) {
         this.resource.update({ id: newConcert.id }, newConcert).then(
           response => {

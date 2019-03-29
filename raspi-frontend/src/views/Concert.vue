@@ -17,6 +17,7 @@
           @cancelCreateEdit="cancelCreateEdit"
           @editConcert="editConcert"
           @remove="remove"
+          :venues="venues"
           :resource="resource"
         />
         <div class="col-md-12 mx-auto show-concert-container">
@@ -87,21 +88,21 @@ export default {
             this.$delete(this.concerts, concertArray.index);
           }
         });
+      }
+    },
+    async created() {
+      let customActions = {
+        publish: { methods: "POST", url: "shows/{id}/publish" },
+        endSale: { methods: "POST", url: "shows/{id}/endsale" }
+      };
+      this.resource = this.$resource("shows/{id}", {}, customActions);
+      this.$http.get("venues/").then(response => {
+        this.venues = response.body;
+      });
+      this.resource.get().then(response => {
+        this.concerts = response.body;
+      });
     }
-  },
-  async created() {
-    let customActions = {
-      publish: { methods: "POST", url: "shows/{id}/publish" },
-      endSale: { methods: "POST", url: "shows/{id}/endsale" }
-    };
-    this.resource = this.$resource("shows/{id}", {}, customActions);
-    this.$http.get("venues/").then(response => {
-      this.venues = response.body;
-    });
-    this.resource.get().then(response => {
-      this.concerts = response.body;
-    });
-  }
 };
 </script>
 
