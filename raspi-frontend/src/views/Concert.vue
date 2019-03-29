@@ -1,15 +1,12 @@
 <template>
   <div style="width: 100%; height: 100%; position: relative">
-    <img id="imgSalle" src="~@/assets/login-bg.jpg">
-    <img id="imgGuit" src="~@/assets/guit-bg.jpg">
-    <div id="imgSalleOverlay"></div>
     <h1 class="page-title">Spectacles</h1>
     <div id="tableContainer">
       <div>
-        <div class="button-bg"></div>
-        <div class="button-bar-bg"></div>
-        <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2>
-        <button
+        <!-- <div class="button-bg"></div>
+        <div class="button-bar-bg"></div> -->
+        <!-- <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2> -->
+        <button id="newConcertBtn"
           v-if="!createEditConcert"
           class="btn btn-primary button"
           @click="createConcert"
@@ -21,7 +18,7 @@
           :resource="resource"
           :venues="venues"
         />
-        <div class="col-md-6 mx-auto button">
+        <div class="col-md-12 mx-auto show-concert-container">
           <ShowConcerts
             :concerts="concerts"
             :venues="venues"
@@ -112,71 +109,6 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Sniglet");
 @import url("https://fonts.googleapis.com/css?family=Raleway");
 
-h2.hidden-instructions {
-  opacity: 0;
-  animation: fade-out;
-  animation-duration: 0.2s;
-}
-
-h2.visible-instructions {
-  opacity: 1;
-  animation: fade-in;
-  animation-duration: 0.2s;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 100;
-  }
-}
-
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-#imgGuit {
-  display: none;
-  width: 100vw;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 0% 50%);
-  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 0% 50%);
-}
-
-img#imgSalle {
-  width: 100vw;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
-  clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
-}
-
-#imgSalleOverlay {
-  width: 100vw;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0.5;
-  background-color: rgba(0, 0, 0, 0.6);
-  -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
-  clip-path: polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%);
-}
-
 h1.page-title {
   margin: 0;
   position: absolute;
@@ -208,30 +140,6 @@ h1.page-title {
   padding-bottom: 20%;
 }
 
-div.button-bg {
-  display: none;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 5rem;
-  background-color: rgba(0, 0, 0, 0.8);
-  box-shadow: 0px 0px 5px 1px rgba(250, 250, 250, 1);
-  position: absolute;
-  top: calc(50% - 5rem);
-  left: calc(50% - 5rem);
-  z-index: 2;
-}
-
-div.button-bar-bg {
-  width: 100%;
-  height: 1.2rem;
-  background-color: rgba(0, 0, 0, 1);
-  box-shadow: 0px 0px 5px 1px rgba(250, 250, 250, 1);
-  position: absolute;
-  top: calc(50% - 0.6rem);
-  left: 0;
-  z-index: 2;
-}
-
 div.venue {
   width: 100%;
   height: calc(100% - 85px);
@@ -261,4 +169,19 @@ h2.instructions {
   border-color: #42b983;
   color: #42b983;
 }
+
+div.show-concert-container {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 6rem;
+  padding-left: 0
+}
+
+#newConcertBtn {
+  position: absolute;
+  right: 3rem;
+  top: 1.5rem;
+  font-size: 1.2rem;
+}
+
 </style>
