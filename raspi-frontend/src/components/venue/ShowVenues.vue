@@ -100,14 +100,11 @@ export default {
       today: new Date()
     };
   }
-};
+}; // TODO if time allows add no-data placeholder
 </script>
 
 <style scoped>
-/* .card {
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 2rem;
-} */
+@import url("https://fonts.googleapis.com/css?family=Sniglet");
 
 span.passed-event {
   color: lightcoral;
@@ -139,6 +136,7 @@ div.venue-row:nth-child(2n+1) {
 div.venue-row > .venue-cell {
   display: table-cell;
   vertical-align: middle;
+  font-family: 'Sniglet';
 }
 
 div.venue-row > .venue-cell > .left-aligned {

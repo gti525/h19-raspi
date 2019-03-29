@@ -177,6 +177,7 @@ div.form-data-row {
   padding: 0.5rem 0 0.3rem 0;
   position: relative;
 }
+
 div.form-data-row > input {
   display: inline-block;
   margin: 0 0.5rem;

@@ -127,7 +127,7 @@ div.show-venue-container {
 #newVenueBtn {
   position: absolute;
   right: 5rem;
-  top: 1.2rem;
+  top: 1.5rem;
 }
 
 </style>
