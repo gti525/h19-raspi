@@ -28,6 +28,7 @@
 
 <script>
 import $ from "jquery";
+import { required, minLength, between } from "vuelidate/lib/validators";
 
 export default {
   name: "NewVenue",
@@ -37,11 +38,25 @@ export default {
   },
   data() {
     return {
-      street: "",
-      city: "",
-      postalCode: "",
+      street: this.newVenue.address.split(",")[0] || "",
+      city: this.newVenue.address.split(",")[1] || "",
+      postalCode: this.newVenue.address.split(",")[2] || "",
       errors: {}
     };
+  },
+  validation: {
+    street: {
+      required,
+      minLength: minLength(4)
+    },
+    city: {
+      required,
+      minLength: minLength(2)
+    },
+    postalCode: {
+      required,
+      minLength: minLength(6)
+    }
   },
   mounted: function() {
     $("#newVenue").slideDown(400);
@@ -103,7 +118,8 @@ export default {
         that.$emit("cancelCreateEdit");
       });
     }
-  }
+  },
+  watch: {}
 };
 </script>
 <style scoped>

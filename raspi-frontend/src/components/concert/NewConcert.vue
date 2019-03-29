@@ -54,7 +54,6 @@ export default {
     resource: Object,
     venues: Array
   },
-  data: () => {},
   validations: {
     newConcert: {
       name: { required, min: minLength(4) },
@@ -75,11 +74,11 @@ export default {
   },
   methods: {
     async submit() {
-      this.newConcert.date = this.$moment(this.newConcert.date).format(
+      this.newConcert.date = this.$moment(newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
       );
       if (this.newConcert.id) {
-        this.resource.update({ id: newConcert.id }, this.newConcert).then(
+        this.resource.update({ id: newConcert.id }, newConcert).then(
           response => {
             if (response.status === 200) {
               this.$notify({
@@ -103,7 +102,7 @@ export default {
         );
         this.$emit("cancelCreateEdit");
       } else {
-        this.resource.save({}, newConcert).then(
+        this.resource.save({}, this.newConcert).then(
           response => {
             if (response.status === 201)
               this.$notify({

@@ -8,7 +8,7 @@
         <div v-if="venue.shows.length !== 0">
           <h4>Spectacles à venir:</h4>
           <div v-for="show in venue.shows" :key="show.id">
-            <div v-if="!dateHasPassed(show.date)">
+            <div v-if="dateIsUpcoming(show.date)">
               <p>
                 {{show.name}}
                 <br>
@@ -34,9 +34,10 @@ export default {
       this.$emit("editVenue", venue);
       this.$emit("cancelCreateEdit");
     },
-    dateHasPassed(date) {
+    dateIsUpcoming(date) {
       let dateConverted = this.$moment(date);
-      return this.$moment().isAfter(dateConverted);
+      let rightNow = this.$moment();
+      return dateConverted.isAfter(rightNow);
     }
   },
   data() {
