@@ -1,5 +1,7 @@
 <template>
-  <div id="newVenue">
+<div>
+  <div id="newVenueOverlay"></div>
+  <div id="newVenue" style="display: none">
     <h2>Créer une salle</h2>
     <form id="venueForm" v-on:submit="submit(newVenue)">
       <div class="form-data-row">
@@ -24,6 +26,7 @@
       </div>
     </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -59,7 +62,9 @@ export default {
     }
   },
   mounted: function() {
-    $("#newVenue").slideDown(400);
+    $('#newVenue').slideDown(400);
+    document.getElementById('newVenueOverlay').classList.remove('hidden-overlay');
+    document.getElementById('newVenueOverlay').classList.add('visible-overlay');
   },
   methods: {
     async submit(form) {
@@ -71,7 +76,7 @@ export default {
               this.$notify({
                 group: "foo",
                 title: "Réussi!",
-                text: "Salle modifié avec succès!",
+                text: "Salle modifiée avec succès!",
                 type: "success"
               });
             }
@@ -94,7 +99,7 @@ export default {
             this.$notify({
               group: "foo",
               title: "Réussi!",
-              text: "Spectacle créé avec succès",
+              text: "Salle créée avec succès",
               type: "success"
             });
             this.$emit("cancelCreateEdit", response.body);
@@ -114,24 +119,65 @@ export default {
     },
     cancel() {
       let that = this;
-      $("#newVenue").slideUp(400, function() {
+      $('#newVenue').slideUp(400, function() {
         that.$emit("cancelCreateEdit");
       });
+      document.getElementById('newVenueOverlay')
+        .classList.replace('visible-overlay', 'hidden-overlay');
     }
   },
   watch: {}
 };
 </script>
 <style scoped>
+#newVenueOverlay {
+  position: absolute;
+  z-index: 19;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.75);
+}
+
+#newVenueOverlay.visible-overlay {
+  animation: fade-in;
+  animation-duration: 0.5s;
+}
+
+#newVenueOverlay.hidden-overlay {
+  animation: fade-out;
+  animation-duration: 0.5s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 #newVenue {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(250, 250, 250, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
   height: 450px;
   width: 495px;
   display: inline-block;
-  position: relative;
   border: 3px solid black;
+  position: absolute;
+  z-index: 20;
+  left: calc(50% - 247px);
+  top: 5rem;
 }
 
 #newVenue > h2,
@@ -171,6 +217,7 @@ div.form-data-row {
   padding: 0.5rem 0 0.3rem 0;
   position: relative;
 }
+
 div.form-data-row > input {
   display: inline-block;
   margin: 0 0.5rem;

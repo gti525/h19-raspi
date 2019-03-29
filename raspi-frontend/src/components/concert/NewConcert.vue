@@ -1,5 +1,7 @@
 <template>
-  <div id="newConcert">
+<div>
+  <div id="newConcertOverlay"></div>
+  <div id="newVenue" style="display: none">
     <h2>Créer un Concert</h2>
     <form id="venueForm" v-on:submit.prevent="submit()">
       <div class="form-data-row">
@@ -23,14 +25,13 @@
         <input class="date-selector" type="text" placeholder="Date du concert">
       </div>
       <div class="form-data-row" id="roomSelectionContainer">
-        <label id="roomLabel" class="label">Salle</label>
-        <select v-model="newConcert.venue" required>
+        <select @change=onVenueChange v-model="selected" required>
+          <option disabled hidden value="">Salle de Spectacle</option>
           <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
         </select>
       </div>
       <div class="form-data-row">
-        <label class="label">Prix du Billet</label>
-        <input v-model="newConcert.ticket_price" type="number" name="price">
+        <input placeholder="Prix du Billet" v-model="newConcert.ticket_price" type="number" name="price">
       </div>
       <div class="control">
         <b-button variant="primary" @click="submit()">Soumettre</b-button>
@@ -38,6 +39,7 @@
       </div>
     </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -54,6 +56,11 @@ export default {
     resource: Object,
     venues: Array
   },
+  data: () => {
+    return {
+      selected: ''
+    }
+  },
   validations: {
     newConcert: {
       name: { required, min: minLength(4) },
@@ -67,7 +74,9 @@ export default {
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
-    $("#newConcert").slideDown(800);
+    $("#newVenue").slideDown(400);
+    document.getElementById('newConcertOverlay').classList.remove('hidden-overlay');
+    document.getElementById('newConcertOverlay').classList.add('visible-overlay');
   },
   beforeRouteLeave(from, to, next) {
     next();
@@ -77,6 +86,7 @@ export default {
       this.newConcert.date = this.$moment(newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
       );
+      this.newConcert.venue = this.selected;
       if (this.newConcert.id) {
         this.resource.update({ id: newConcert.id }, newConcert).then(
           response => {
@@ -129,9 +139,14 @@ export default {
     },
     cancel() {
       let that = this;
-      $("#newConcert").slideUp(800, function() {
+      $("#newVenue").slideUp(400, function() {
         that.$emit("cancelCreateEdit");
       });
+      document.getElementById('newConcertOverlay')
+        .classList.replace('visible-overlay', 'hidden-overlay');
+    },
+    onVenueChange() {
+      document.querySelector('#roomSelectionContainer > select').classList.add('valid-selection');
     }
   }
 };
@@ -150,15 +165,55 @@ function prepareDatePicker() {
 </script>
 
 <style scoped>
-#newConcert {
-  background-color: rgba(255, 255, 255, 0.8);
+
+#newConcertOverlay {
+  position: absolute;
+  z-index: 19;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.75);
+}
+
+#newConcertOverlay.visible-overlay {
+  animation: fade-in;
+  animation-duration: 0.5s;
+}
+
+#newConcertOverlay.hidden-overlay {
+  animation: fade-out;
+  animation-duration: 0.5s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#newVenue {
+  background-color: rgba(250, 250, 250, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
   height: 450px;
   width: 495px;
   display: inline-block;
-  position: relative;
   border: 3px solid black;
+  position: absolute;
+  z-index: 20;
+  left: calc(50% - 247px);
+  top: 5rem;
 }
 
 #newConcert > h2,
@@ -198,7 +253,8 @@ div.form-data-row {
   padding: 0.5rem 0 0.3rem 0;
   position: relative;
 }
-div.form-data-row > input {
+
+div.form-data-row > input, #roomSelectionContainer > select {
   display: inline-block;
   margin: 0 0.5rem;
   width: calc(100% - 1rem);
@@ -208,13 +264,51 @@ div.form-data-row > input {
   border: 1px solid darkgray;
 }
 
+#roomSelectionContainer > select:not(.valid-selection) {
+  color: gray;
+}
+
+#roomSelectionContainer > select > option:not(:first-child) {
+  color: black;
+}
+
 div.form-data-row > input.invalid-form-data {
   border: 1px solid #ff4136 !important;
 }
 
-div.form-data-row > input:focus {
+div.form-data-row > input:focus, #roomSelectionContainer > select:focus {
   outline: none; /* so no rectangle around rounded edges */
   border: 1px solid #0074d9;
+}
+
+textarea {
+  width: calc(100% - 1rem);
+  border-radius: 5px;
+  padding-left: 0.5rem;
+  padding-top: 0.3rem;
+  resize: none;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: rgb(77, 144, 254);
+}
+
+button.btn.btn-primary {
+  margin-right: 1rem;
+  background-color: #2ecc40;
+  border-color: #aaaaaa;
+}
+
+button.btn.btn-primary + button {
+  background-color: rgb(108, 117, 125);
+  border-color: darkgray;
+}
+
+div.control {
+  text-align: left;
+  padding-left: 0.8rem;
+  padding-top: 18px;
 }
 </style>
 

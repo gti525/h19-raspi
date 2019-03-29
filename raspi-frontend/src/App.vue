@@ -63,6 +63,17 @@ export default {
   overflow-y: auto;
 }
 
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  background-color: rgba(255, 255, 255, 1);
+  z-index: 1000;
+  color: #797676;
+  font-weight: bold;
+  box-shadow: 0px 0px 4px 4px rgba(0, 0, 0, 0.5);
+}
+
 #logoutBtn {
   padding: 0;
   margin: 0 1rem;
@@ -86,9 +97,8 @@ export default {
   width: 100vw;
 }
 
-#app.salles,
-#app.concerts {
-  background: rgba(0, 0, 0, 0.1);
+#app.salles, #app.concerts {
+  background: rgb(250,250,250);
 }
 
 #nav {
