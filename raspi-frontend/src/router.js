@@ -31,10 +31,15 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({
-            name: "sign-up",
-            params: { error: "Veuillez vous connecter avant de poursuivre" }
-          });
+          next(
+            { name: "sign-up" },
+            Vue.notify({
+              group: "foo",
+              title: "Erreur",
+              text: "Veuillez-vous connecter",
+              type: "error"
+            })
+          );
         }
       }
     },
@@ -46,10 +51,15 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({
-            name: "sign-up",
-            params: { error: "Veuillez vous connecter avant de poursuivre" }
-          });
+          next(
+            { name: "sign-up" },
+            Vue.notify({
+              group: "foo",
+              title: "Erreur",
+              text: "Veuillez-vous connecter",
+              type: "error"
+            })
+          );
         }
       }
     },
@@ -61,10 +71,15 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({
-            name: "sign-up",
-            params: { error: "Veuillez vous connecter avant de poursuivre" }
-          });
+          next(
+            { name: "sign-up" },
+            Vue.notify({
+              group: "foo",
+              title: "Erreur",
+              text: "Veuillez-vous connecter",
+              type: "error"
+            })
+          );
         }
       }
     },
@@ -76,10 +91,15 @@ export default new Router({
         if (localStorage.getItem("token")) {
           next();
         } else {
-          next({
-            name: "sign-up",
-            params: { error: "Veuillez vous connecter avant de poursuivre" }
-          });
+          next(
+            { name: "sign-up" },
+            Vue.notify({
+              group: "foo",
+              title: "Erreur",
+              text: "Veuillez-vous connecter",
+              type: "error"
+            })
+          );
         }
       }
     }

@@ -15,8 +15,9 @@
           v-if="createEditConcert"
           :newConcert="newConcert"
           @cancelCreateEdit="cancelCreateEdit"
+          @editConcert="editConcert"
+          @remove="remove"
           :resource="resource"
-          :venues="venues"
         />
         <div class="col-md-12 mx-auto show-concert-container">
           <ShowConcerts
@@ -66,7 +67,8 @@ export default {
         name: "",
         date: new Date(),
         description: "",
-        venue: this.venues[0]
+        venue: this.venues[0],
+        ticket_price: 0
       };
     },
     cancelCreateEdit(concert) {
@@ -79,12 +81,12 @@ export default {
       this.newConcert = concert;
     },
     async remove(concertArray) {
-      await this.refreshToken();
-      this.resource.remove({ id: concertArray.concert.id }).then(response => {
-        if (response.status === "204") {
-          this.$delete(this.concerts, concertArray.index);
-        }
-      });
+      if (confirm("Êtes-vous certain?"))
+        this.resource.remove({ id: concertArray.concert.id }).then(response => {
+          if (response.status === "204") {
+            this.$delete(this.concerts, concertArray.index);
+          }
+        });
     }
   },
   async created() {

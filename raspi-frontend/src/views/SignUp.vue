@@ -1,15 +1,5 @@
 <template>
   <div id="signUpConainer">
-    <div>
-      <span v-if="error" class="alert alert-danger">{{error}}</span>
-    </div>
-    <div v-if="errors">
-      <span
-        class="alert alert-danger"
-        v-for="(error, index) in errors"
-        :key="`error-${index}`"
-      >{{ error }}</span>
-    </div>
     <div class="sign-up">
       <div class="side-panel left-panel">
         <h1>Gestion de Salle</h1>
@@ -18,7 +8,7 @@
       <div class="side-panel right-panel">
         <div id="signUpFormContainer">
           <h2>Connexion</h2>
-          <form id="signUpForm" v-on:submit="onSubmit()">
+          <form id="signUpForm" v-on:submit.prevent="onSubmit()">
             <div class="form-data-row">
               <input type="text" v-model="username" placeholder="Nom d'utilisateur">
             </div>
@@ -26,7 +16,7 @@
               <input type="password" v-model="password" placeholder="Nouveau mot de passe">
             </div>
             <div id="signUpBtnContainer">
-              <b-button type="submit" size="lg" @click="onSubmit()" id="signUpBtn">Connecter</b-button>
+              <b-button type="submit" size="lg" id="signUpBtn">Connecter</b-button>
             </div>
           </form>
         </div>
@@ -36,6 +26,8 @@
 </template>
 
 <script>
+import { required, minLength, between } from "vuelidate/lib/validators";
+
 export default {
   name: "sign-up",
   mounted: onLoad,
@@ -49,6 +41,14 @@ export default {
       errors: ""
     };
   },
+  validations: {
+    username: {
+      required
+    },
+    password: {
+      required
+    }
+  },
   methods: {
     onSubmit() {
       const formData = {
@@ -61,7 +61,14 @@ export default {
           localStorage.setItem("token", JSON.stringify(res.body));
           this.$router.push({ path: "/venues" });
         })
-        .catch(error => (this.errors = error.body.non_field_errors));
+        .catch(error => {
+          this.$notify({
+            group: "foo",
+            title: "Erreur",
+            text: "Utilisateur ou mot de passe incorret",
+            type: "error"
+          });
+        });
     }
   },
   beforeRouteLeave(from, to, next) {

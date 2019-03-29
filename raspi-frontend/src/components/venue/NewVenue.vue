@@ -3,11 +3,6 @@
   <div id="newVenueOverlay"></div>
   <div id="newVenue" style="display: none">
     <h2>Créer une salle</h2>
-    <div v-if="errors">
-      <div v-for="(value, key) in errors" :key="key">
-        <span class="alert alert-danger">{{key}}: {{value}}</span>
-      </div>
-    </div>
     <form id="venueForm" v-on:submit="submit(newVenue)">
       <div class="form-data-row">
         <input v-model="newVenue.name" type="text" name="name" placeholder="nom">
@@ -36,6 +31,7 @@
 
 <script>
 import $ from "jquery";
+import { required, minLength, between } from "vuelidate/lib/validators";
 
 export default {
   name: "NewVenue",
@@ -45,11 +41,25 @@ export default {
   },
   data() {
     return {
-      street: "",
-      city: "",
-      postalCode: "",
+      street: this.newVenue.address.split(",")[0] || "",
+      city: this.newVenue.address.split(",")[1] || "",
+      postalCode: this.newVenue.address.split(",")[2] || "",
       errors: {}
     };
+  },
+  validation: {
+    street: {
+      required,
+      minLength: minLength(4)
+    },
+    city: {
+      required,
+      minLength: minLength(2)
+    },
+    postalCode: {
+      required,
+      minLength: minLength(6)
+    }
   },
   mounted: function() {
     $('#newVenue').slideDown(400);
@@ -61,19 +71,48 @@ export default {
       form.address = this.street + ", " + this.city + ", " + this.postalCode;
       if (form.id) {
         this.resource.update({ id: form.id }, form).then(
-          response => {},
+          response => {
+            if (response.status === 200) {
+              this.$notify({
+                group: "foo",
+                title: "Réussi!",
+                text: "Salle modifié avec succès!",
+                type: "success"
+              });
+            }
+          },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
         this.$emit("cancelCreateEdit");
       } else {
         this.resource.save({}, form).then(
-            response => {
+          response => {
+            this.$notify({
+              group: "foo",
+              title: "Réussi!",
+              text: "Spectacle créé avec succès",
+              type: "success"
+            });
             this.$emit("cancelCreateEdit", response.body);
           },
           error => {
-            this.errors = error.body;
+            for (const [key, value] of Object.entries(error.body)) {
+              this.$notify({
+                group: "foo",
+                title: "Erreur dans " + key,
+                text: value[0],
+                type: "warn"
+              });
+            }
           }
         );
       }
@@ -86,7 +125,8 @@ export default {
       document.getElementById('newVenueOverlay')
         .classList.replace('visible-overlay', 'hidden-overlay');
     }
-  }
+  },
+  watch: {}
 };
 </script>
 <style scoped>
@@ -162,8 +202,8 @@ button.btn {
 
 button.btn.btn-primary {
   margin-right: 1rem;
-  background-color: #2ECC40;
-  border-color: #AAAAAA;
+  background-color: #2ecc40;
+  border-color: #aaaaaa;
 }
 
 button.btn.btn-primary + button {
