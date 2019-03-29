@@ -15,33 +15,20 @@
       </div>
       <div class="venue-cell">
         <div class="venue-show">Spectacles:
-          <span class="show-trigger upcoming-show">{{countUpcomingShows(venue)}} à venir</span>,
-          <span class="show-trigger passed-show">{{venue.shows.length - countUpcomingShows(venue)}} passés</span>
+          <span @click="showUpcomingShows(venue)" class="show-trigger upcoming-show">{{countUpcomingShows(venue)}} à venir</span>,
+          <span @click="showPassedShows(venue)" class="show-trigger passed-show">{{venue.shows.length - countUpcomingShows(venue)}} passés</span>
         </div>
       </div>
       <div class="venue-cell">
         <div class="venue-edit-btn" @click="edit(venue)">&#x1F589;&nbsp;<span>[Modifier]</span></div>
       </div>
-      <!-- <div v-if="venue.shows.length !== 0">
-        <h4>Spectacles:</h4>
-        <div v-for="show in ordered(venue.shows)" :key="show.id">
-          <div>
-            <p>
-              {{show.name}}&nbsp;
-              <span class="passed-event" v-if="hasDatePassed(show.date)">passé</span>
-              <span class="upcoming-event" v-if="!hasDatePassed(show.date)">à venir</span>
-              <br>
-              {{show.date | moment("YYYY-MM-DD HH:MM")}}
-            </p>
-          </div>
-        </div>
-      </div>
-      <b-button variant="primary" @click="edit(venue)">Modifier</b-button> -->
     </div>
   </div>
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   name: "ShowVenues",
   props: {
@@ -72,6 +59,30 @@ export default {
     },
     countUpcomingShows(venue) {
       return venue.shows.filter(s => !this.hasDatePassed(s.date)).length;
+    },
+    showUpcomingShows(venue) {
+      Swal.fire({
+        title: 'Spectacles à venir',
+        text: venue.shows
+          .filter(s => !this.hasDatePassed(s.date))
+          .map(s => `${s.name} (${new Date(s.date).toString().split(/\sGMT/)[0]})`)
+          .join(', ') || 'aucun spectacle à venir...',
+        type: 'info'
+      })
+    },
+    showPassedShows(venue) {
+      let orderedFilteredShows = this.ordered(venue.shows)
+        .filter(s => this.hasDatePassed(s.date));
+      const MAX_LISTED_RESULTS = 5;
+      Swal.fire({
+        title: 'Spectacles passés',
+        html: (orderedFilteredShows.filter((s, idx) => idx < MAX_LISTED_RESULTS)
+          .map(s => `• ${s.name} (${new Date(s.date).toString().split(/\sGMT/)[0]})`)
+          .join(',<br>') 
+          + (orderedFilteredShows.length > MAX_LISTED_RESULTS ?'...' :''))
+          || 'aucun spectacle passé...',
+        type: 'info'
+      })
     }
   },
   data() {

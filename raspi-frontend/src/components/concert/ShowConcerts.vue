@@ -1,6 +1,6 @@
 <template>
   <div id="showConcert">
-    <div v-for="(concert, index) in concerts" class="concert-row" :key="concert.id">
+    <div v-for="concert in concerts" class="concert-row" :key="concert.id">
       <div class="concert-cell">
         <div class="space-taker"></div>
       </div>
@@ -24,13 +24,6 @@
           <span @click="endSale(concert)">Fermer Vente</span>
         </div>
       </div>
-      <!-- </div>
-        <p>Prix: {{concert.ticket_price}}$</p>
-        <b-button variant="primary" @click="edit(concert)">Modifier</b-button>
-        <b-button variant="danger" @click="remove(concert, index)">Effacer</b-button>
-        <b-button variant="success" @click="publish(concert)">Publier</b-button>
-        <b-button variant="info" @click="endSale(concert)">Fermer Vente</b-button>
-      </div> -->
     </div>
   </div>
 </template>
