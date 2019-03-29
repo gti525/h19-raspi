@@ -63,10 +63,10 @@ export default {
     showUpcomingShows(venue) {
       Swal.fire({
         title: 'Spectacles à venir',
-        text: venue.shows
+        html: venue.shows
           .filter(s => !this.hasDatePassed(s.date))
-          .map(s => `${s.name} (${new Date(s.date).toString().split(/\sGMT/)[0]})`)
-          .join(', ') || 'aucun spectacle à venir...',
+          .map(s => `• ${s.name} (${new Date(s.date).toString().split(/\sGMT/)[0]})`)
+          .join(',<br>') || 'aucun spectacle à venir...',
         type: 'info'
       })
     },
