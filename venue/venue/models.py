@@ -114,7 +114,7 @@ class Seller(models.Model):
         if not success:
             return success, message
 
-        return success, 'Spectacle publié avec succès'
+        return success, message
 
     def delete_show(self, show):
         client = self.get_api_client()
