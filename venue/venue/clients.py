@@ -83,7 +83,7 @@ class Vente1Client(BaseSellerClient):
         if not response.status_code == 200:
             return False, response.json().get('message')
 
-        return True, response.json().get('message')
+        return True, response.json()
 
 
 class Vente2Client(BaseSellerClient):
