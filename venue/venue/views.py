@@ -83,7 +83,7 @@ class ShowPublishView(APIView):
 
         tickets = list(self.chunks(
             show_tickets,
-            show_tickets.count()/sellers.count()
+            show_tickets.count()//sellers.count(),
         ))
 
         messages = []
