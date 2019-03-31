@@ -79,8 +79,12 @@ class ShowPublishView(APIView):
     def post(self, request, show_id):
         show = get_object_or_404(Show, id=show_id)
         sellers = Seller.objects.all()
+        show_tickets = show.get_tickets()
 
-        tickets = list(self.chunks(show.get_tickets(), sellers.count()))
+        tickets = list(self.chunks(
+            show_tickets,
+            show_tickets.count()/sellers.count()
+        ))
 
         messages = []
         status_code = status.HTTP_201_CREATED
