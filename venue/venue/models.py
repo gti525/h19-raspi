@@ -97,12 +97,13 @@ class Seller(models.Model):
         if not success:
             return success, message
 
-        ShowPublication.objects.create(
+        publication = ShowPublication.objects.create(
             show=show,
-            tickets=tickets,
             seller=self,
             status=1,
         )
+
+        publication.tickets.set(tickets)
 
         return success, 'Spectacle publié avec succès'
 
