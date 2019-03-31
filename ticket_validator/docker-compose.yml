@@ -3,10 +3,11 @@ version: '3'
 services:
   web:
     build: .
+    restart: always
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "80:8000"
     environment:
       DB_TYPE: mysql
     command: |

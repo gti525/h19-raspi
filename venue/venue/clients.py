@@ -28,7 +28,7 @@ class Vente1Client(BaseSellerClient):
             'adminKey': self.API_TOKEN,
         }
 
-    def create_show(self, show):
+    def create_show(self, show, tickets):
         payload = {
             'uuid': str(show.uuid),
             'title': show.name,
@@ -44,7 +44,7 @@ class Vente1Client(BaseSellerClient):
             },
             'tickets': [{
                 'uuid': str(ticket.uuid),
-            } for ticket in show.get_tickets()],
+            } for ticket in tickets],
             'status': 'opened',
         }
 
@@ -89,23 +89,52 @@ class Vente1Client(BaseSellerClient):
 class Vente2Client(BaseSellerClient):
 
     def get_headers(self):
-        return {}
+        return {
+            'Authorization': f'API-Key {self.API_TOKEN}'
+        }
 
-    def create_show(self, show):
+    def create_show(self, show, tickets):
         payload = {
-
+            'title': show.name,
+            'description': show.description,
+            'artist': show.artist or 'TBA',
+            'date': show.date.isoformat().split('+')[0],
+            'price': show.ticket_price,
+            'venue': {
+                'name': show.venue.name,
+                'address': show.venue.address,
+                'capacity': show.venue.capacity,
+            },
+            'tickets': [{
+                'uuid': str(ticket.uuid),
+                'price': float(ticket.price),
+            } for ticket in tickets],
+            'status': 'opened',
         }
 
         response = requests.post(
-            self.API_URL,
+            self.API_URL + '/api/events',
             json=payload,
             headers=self.get_headers(),
         )
 
         if not response.status_code == 201:
-            return False
+            return False, response.json().get('message')
 
-        return response.json()
+        return True, response.json().get('id')
+
+    def end_sale(self, show):
+        url = f'{self.API_URL}/api/events/{show.uuid}/_terminate'
+
+        response = requests.post(
+            url,
+            headers=self.get_headers(),
+        )
+
+        if not response.status_code == 200:
+            return False, response.json().get('message')
+
+        return True, {'tickets': response.json()}
 
 
 __all__ = [

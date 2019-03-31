@@ -70,6 +70,7 @@ class Seller(models.Model):
     name = models.CharField(max_length=100)
     base_url = models.CharField(max_length=150)
     token = models.CharField(max_length=150)
+    active = models.BooleanField(default=True)
 
     client_class = models.CharField(
         max_length=100,
@@ -89,34 +90,59 @@ class Seller(models.Model):
             token=self.token,
         )
 
-    def create_show(self, show):
+    def create_show(self, show, tickets):
         client = self.get_api_client()
-        success, message = client.create_show(show)
-
-        print(success)
-        print(message)
+        success, message = client.create_show(show, tickets)
 
         if not success:
             return success, message
 
         ShowPublication.objects.create(
             show=show,
+            tickets=tickets,
             seller=self,
             status=1,
         )
 
-        return success, 'Goood'
+        return success, 'Spectacle publié avec succès'
+
+    def end_sale(self, show):
+        client = self.get_api_client()
+        success, message = client.end_sale(show)
+
+        if not success:
+            return success, message
+
+        return success, 'Spectacle publié avec succès'
+
+    def delete_show(self, show):
+        client = self.get_api_client()
+        success, message = client.delete_show(show)
+
+        if not success:
+            return success, message
+
+        return success, 'Spectacle supprimé avec succès'
+
+
+
 
 
 class ShowPublication(models.Model):
+    CREATED = 0
+    ON_SALE = 1
+    SALE_ENDED = 2
+
     STATUS = (
-        (0, _('CREATED')),
-        (1, _('ON SALE')),
-        (2, _('SALE ENDED')),
+        (CREATED, _('CREATED')),
+        (ON_SALE, _('ON SALE')),
+        (SALE_ENDED, _('SALE ENDED')),
     )
 
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    tickets = models.ManyToManyField(Ticket)
+
     status = models.PositiveIntegerField(
         choices=STATUS,
         default=0,
@@ -124,5 +150,26 @@ class ShowPublication(models.Model):
 
     def __str__(self):
         return f'[{self.seller}] {self.show}'
+
+    def end_sale(self):
+        success, message = self.seller.end_sale(self.show)
+
+        if not success:
+            return success, message
+
+        self.status = self.SALE_ENDED
+        self.save()
+
+        tickets = message.get('tickets')
+        sold_status = ['vendu', 'sold']
+
+        # Change ticket status if sold
+        for ticket in tickets:
+            instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
+            if instance.exists() and ticket['status'] in sold_status:
+                instance.sold = True
+                instance.save()
+
+        return success, message
 
 

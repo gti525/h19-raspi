@@ -29,5 +29,6 @@ urlpatterns = [
    path('scan/', views.TicketScanView.as_view()),
    path('billetScan', views.TicketScanView.as_view()),
    path('tickets', views.ReceiveTicketView.as_view()),
-
+   path('attendance', views.AttendingReportView.as_view()),
+   path('scanned', views.ScannedTicketsView.as_view()),
 ]

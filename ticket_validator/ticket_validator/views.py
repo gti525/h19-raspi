@@ -1,9 +1,12 @@
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import TicketScanRequest, ReceiveTicketSerializer
+from .serializers import TicketScanRequest, TicketSerializer
+from .serializers import ReceiveTicketSerializer
+from .serializers import ScanLogSerializer
 from .models import Ticket, ScanLog
 
 
@@ -66,3 +69,15 @@ class ReceiveTicketView(APIView):
             )
 
         return Response(status=status.HTTP_200_OK)
+
+
+class AttendingReportView(ListAPIView):
+    serializer_class = ScanLogSerializer
+    queryset = ScanLog.objects.all()
+    permission_classes = ()
+
+
+class ScannedTicketsView(ListAPIView):
+    serializer_class = TicketSerializer
+    queryset = Ticket.objects.filter(scanned=True)
+    permission_classes = ()

@@ -31,6 +31,7 @@ def publish_show(modeladmin, request, queryset):
             else:
                 messages.success(request, message)
 
+
 def delete_from_seller(modeladmin, request, queryset):
     for show in queryset:
         for seller in Seller.objects.all():
@@ -40,6 +41,7 @@ def delete_from_seller(modeladmin, request, queryset):
             else:
                 messages.success(request, message)
 
+
 def send_sale(modeladmin, request, queryset):
     for show in queryset:
         for seller in Seller.objects.all():
@@ -48,6 +50,7 @@ def send_sale(modeladmin, request, queryset):
                 messages.error(request, f'[{seller}] Erreur: {message}')
             else:
                 messages.success(request, message)
+
 
 class ShowAdmin(admin.ModelAdmin):
 

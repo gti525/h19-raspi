@@ -25,6 +25,14 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TicketReturnSerializer(serializers.ModelSerializer):
+    status = serializers.CharField()
+
+    class Meta:
+        model = Ticket
+        fields = 'uuid'
+
+
 class ShowTicketSerializer(ShowSerializer):
     tickets = TicketSerializer(many=True, read_only=True)
 
