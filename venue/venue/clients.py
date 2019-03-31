@@ -73,7 +73,7 @@ class Vente1Client(BaseSellerClient):
         return True, response.json().get('message')
 
     def end_sale(self, show):
-        url = f'{self.API_URL}/api/events/{show.uuid}/endSale'
+        url = f'{self.API_URL}/api/events/{show.uuid}/endEvent'
 
         response = requests.post(
             url,
