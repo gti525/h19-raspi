@@ -6,6 +6,7 @@ class ShowInline(admin.StackedInline):
     model = Show
     extra = 0
 
+
 class VenueAdmin(admin.ModelAdmin):
     list_display = (
         'name',

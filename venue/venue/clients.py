@@ -9,13 +9,13 @@ class BaseSellerClient:
         self.API_URL = url
         self.API_TOKEN = token
 
-    def create_show(self, show):
+    def create_show(self, show, **kwargs):
         return NotImplementedError
 
-    def delete_show(self, show):
+    def delete_show(self, show, **kwargs):
         return NotImplementedError
 
-    def end_sale(self, show):
+    def end_sale(self, show, **kwargs):
         return NotImplementedError
 
 
@@ -28,7 +28,7 @@ class Vente1Client(BaseSellerClient):
             'adminKey': self.API_TOKEN,
         }
 
-    def create_show(self, show, tickets):
+    def create_show(self, show, tickets, **kwargs):
         payload = {
             'uuid': str(show.uuid),
             'title': show.name,
@@ -59,7 +59,7 @@ class Vente1Client(BaseSellerClient):
 
         return True, response.json().get('message')
 
-    def delete_show(self, show):
+    def delete_show(self, show, **kwargs):
         url = f'{self.API_URL}/events/{show.uuid}'
 
         response = requests.delete(
@@ -72,7 +72,7 @@ class Vente1Client(BaseSellerClient):
 
         return True, response.json().get('message')
 
-    def end_sale(self, show):
+    def end_sale(self, show, **kwargs):
         url = f'{self.API_URL}/api/events/{show.uuid}/endEvent'
 
         response = requests.post(
@@ -84,6 +84,9 @@ class Vente1Client(BaseSellerClient):
             return False, response.json().get('message')
 
         return True, response.json()
+
+    def publish(self, publication):
+        return
 
 
 class Vente2Client(BaseSellerClient):
@@ -99,7 +102,6 @@ class Vente2Client(BaseSellerClient):
             'description': show.description,
             'artist': show.artist or 'TBA',
             'date': show.date.isoformat().split('+')[0],
-            'price': show.ticket_price,
             'venue': {
                 'name': show.venue.name,
                 'address': show.venue.address,
@@ -123,8 +125,21 @@ class Vente2Client(BaseSellerClient):
 
         return True, response.json().get('id')
 
-    def end_sale(self, show):
-        url = f'{self.API_URL}/api/events/{show.uuid}/_terminate'
+    def publish(self, publication):
+        url = f'{self.API_URL}/api/events/{publication.remote_id}/_publish'
+
+        response = requests.post(
+            url,
+            headers=self.get_headers(),
+        )
+
+        if not response.status_code == 204:
+            return False, response.json().get('message')
+
+        return True, response.json()
+
+    def end_sale(self, show, publication):
+        url = f'{self.API_URL}/api/events/{publication.remote_id}/_terminate'
 
         response = requests.post(
             url,

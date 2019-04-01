@@ -71,6 +71,7 @@ class Seller(models.Model):
     base_url = models.CharField(max_length=150)
     token = models.CharField(max_length=150)
     active = models.BooleanField(default=True)
+    remote_id = models.BooleanField(default=False)
 
     client_class = models.CharField(
         max_length=100,
@@ -93,17 +94,25 @@ class Seller(models.Model):
     def create_show(self, show, tickets):
         client = self.get_api_client()
         success, message = client.create_show(show, tickets)
+        extra_args = {}
 
         if not success:
             return success, message
+
+        if self.remote_id:
+            extra_args = {
+                'remote_id': message,
+            }
 
         publication = ShowPublication.objects.create(
             show=show,
             seller=self,
             status=1,
+            **extra_args,
         )
-
         publication.tickets.set(tickets)
+
+        client.publish(publication)
 
         return success, 'Spectacle publié avec succès'
 
@@ -126,9 +135,6 @@ class Seller(models.Model):
         return success, 'Spectacle supprimé avec succès'
 
 
-
-
-
 class ShowPublication(models.Model):
     CREATED = 0
     ON_SALE = 1
@@ -144,6 +150,8 @@ class ShowPublication(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     tickets = models.ManyToManyField(Ticket)
 
+    remote_id = models.CharField(max_length=50, null=True)
+
     status = models.PositiveIntegerField(
         choices=STATUS,
         default=0,
@@ -153,7 +161,7 @@ class ShowPublication(models.Model):
         return f'[{self.seller}] {self.show}'
 
     def end_sale(self):
-        success, message = self.seller.end_sale(self.show)
+        success, message = self.seller.end_sale(self.show, publication=self)
 
         if not success:
             return success, message
