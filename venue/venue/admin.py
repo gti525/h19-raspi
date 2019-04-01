@@ -58,6 +58,17 @@ class ShowAdmin(admin.ModelAdmin):
         publish_show,
     )
 
+    def sold(self, object):
+        tickets = object.get_tickets()
+        sold = tickets.filter(sold=True).count()
+
+        return f'{(sold//tickets.count())*100}% ({sold})'
+
+    list_display = (
+        'name',
+        'sold',
+    )
+
 
 admin.site.register(Show, ShowAdmin)
 admin.site.register(Venue, VenueAdmin)
