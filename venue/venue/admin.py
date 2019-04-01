@@ -62,7 +62,7 @@ class ShowAdmin(admin.ModelAdmin):
         tickets = object.get_tickets()
         sold = tickets.filter(sold=True).count()
 
-        return f'{(sold//tickets.count())*100}% ({sold})'
+        return f'{round(sold/tickets.count(), 2)*100}% ({sold})'
 
     list_display = (
         'name',
