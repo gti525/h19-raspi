@@ -167,7 +167,7 @@ class ShowPublication(models.Model):
         # Change ticket status if sold
         for ticket in tickets:
             instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
-            if instance.exists() and ticket['status'] in sold_status:
+            if instance and ticket['status'] in sold_status:
                 instance.sold = True
                 instance.save()
 
