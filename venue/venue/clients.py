@@ -136,7 +136,7 @@ class Vente2Client(BaseSellerClient):
         if not response.status_code == 204:
             return False, response.json().get('message')
 
-        return True, response.json()
+        return True, response
 
     def end_sale(self, show, publication):
         url = f'{self.API_URL}/api/events/{publication.remote_id}/_terminate'
