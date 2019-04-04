@@ -142,12 +142,16 @@ class ShowPublication(models.Model):
     SALE_ENDED = 2
 
     STATUS = (
-        (CREATED, _('CREATED')),
-        (ON_SALE, _('ON SALE')),
-        (SALE_ENDED, _('SALE ENDED')),
+        (CREATED, _('Créé')),
+        (ON_SALE, _('En vente')),
+        (SALE_ENDED, _('Vente terminée')),
     )
 
-    show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    show = models.ForeignKey(
+        Show,
+        on_delete=models.CASCADE,
+        related_name='publications',
+    )
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     tickets = models.ManyToManyField(Ticket)
 
