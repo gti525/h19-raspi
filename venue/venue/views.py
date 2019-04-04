@@ -78,12 +78,12 @@ class ShowPublishView(APIView):
 
     def post(self, request, show_id):
         show = get_object_or_404(Show, id=show_id)
-        sellers = Seller.objects.all()
+        sellers = show.sellers.all()
         show_tickets = show.get_tickets()
 
         tickets = list(self.chunks(
             show_tickets,
-            show_tickets.count()//sellers.count(),
+            show_tickets.count() // sellers.count(),
         ))
 
         messages = []

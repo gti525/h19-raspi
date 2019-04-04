@@ -28,6 +28,7 @@ class Show(models.Model):
     image_url = models.CharField(max_length=250, null=True, blank=True)
 
     ticket_price = models.FloatField()
+    sellers = models.ManyToManyField('Seller')
 
     venue = models.ForeignKey(
         Venue,
