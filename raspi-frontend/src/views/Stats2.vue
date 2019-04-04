@@ -1,22 +1,26 @@
 <template>
   <div id="statsContainer">
+    <button id="downloadChartBtn"
+          class="btn btn-primary button"
+          @click="downloadChart"
+    >Télécharger</button>
     <div class="stats">
       <div class="side-panel left-panel">
-        <div v-if="statistics">
+        <!-- <div v-if="statistics">
           <span>Vendus:{{statistics}}</span>
           <b-button variant="link" @click="seeStats()">Console</b-button>
-        </div>
+        </div> -->
         <div>
           <h2 id="graphSelectionTitle">Rapports Disponibles</h2>
           <div class="graph-list">
             <div class="graph-item selected-item" v-for="concert in concerts" :key="concert.id">
               <div class="item-title">
                 <div>{{concert.name}}</div>
-                <b-button variant="link" @click="getStats(concert.id)">Voir stats</b-button>
+                <!-- <b-button variant="link" @click="getStats(concert.id)">Voir stats</b-button> -->
               </div>
               <div>
                 <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
-                <div class="download-btn">Télécharger</div>
+                <div class="toggle-graph-visibility">Retirer</div>
               </div>
             </div>
           </div>
@@ -75,6 +79,48 @@ export default {
     },
     seeStats() {
       console.log(JSON.stringify(this.statistics));
+    },
+    downloadChart() {
+      let imgOptions = {
+        outputImage: {
+          quality: 1,
+          name: 'RapportDeVentes_' + new Date().toString()
+        },
+        download: true,
+        format: "jpeg",
+        log: false
+      };
+
+      let nbOfTriesLeft = 3;
+      tryToRenderJpeg();
+
+      function tryToRenderJpeg() {
+        console.debug("trying to render jpeg");
+        chartist2image
+          .toJpeg("chartElement", imgOptions, window.chart)
+          .then(base64Img => {
+            window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
+            console.debug("jpeg rendering success");
+          })
+          .catch(async function(err) {
+            if (nbOfTriesLeft-- > 0) {
+              await new Promise(r => setTimeout(r, 0));
+              tryToRenderJpeg();
+            } else {
+              if (window.downloadTriesLeft > 0) {
+                window.downloadTriesLeft--;
+                console.debug("download failure - retrying");
+                // sometimes only simulating a new click will get the file to download
+                // seems to be a bug in the library
+                document.getElementById("downloadChartBtn").click();
+              } else {
+                window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
+                console.error(err);
+              }
+            }
+          }
+        );
+      }
     }
   },
   beforeRouteLeave(from, to, next) {
@@ -95,48 +141,6 @@ function onLoad(vue) {
     .catch(err => {
       console.error(err);
     });
-}
-
-function downloadChart(chartItem) {
-  let imgOptions = {
-    outputImage: {
-      quality: 1,
-      name: getGraphTitle(chartItem).join(" (") + ")"
-    },
-    download: true,
-    format: "jpeg",
-    log: false
-  };
-
-  let nbOfTriesLeft = 3;
-  tryToRenderJpeg();
-
-  function tryToRenderJpeg() {
-    console.debug("trying to render jpeg");
-    chartist2image
-      .toJpeg("chartElement", imgOptions, window.chart)
-      .then(base64Img => {
-        window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-        console.debug("jpeg rendering success");
-      })
-      .catch(async function(err) {
-        if (nbOfTriesLeft-- > 0) {
-          await new Promise(r => setTimeout(r, 0));
-          tryToRenderJpeg();
-        } else {
-          if (window.downloadTriesLeft > 0) {
-            window.downloadTriesLeft--;
-            console.debug("download failure - retrying");
-            // sometimes only simulating a new click will get the file to download
-            // seems to be a bug in the library
-            chartItem.querySelector("div.download-btn").click();
-          } else {
-            window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-            console.error(err);
-          }
-        }
-      });
-  }
 }
 
 /**
@@ -397,41 +401,41 @@ function initListeners(graphData) {
     "div.graph-list > div.graph-item"
   );
   window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-  for (let item of allGraphItems) {
-    item.onclick = async function(event) {
-      let idx = [].indexOf.call(allGraphItems, this);
-      let hasGraphChanged = false;
-      for (let item of allGraphItems) {
-        if (item !== this) {
-          if (item.classList.contains("selected-item")) {
-            hasGraphChanged = true;
-            item.classList.remove("selected-item");
-          }
-        } else {
-          item.classList.add("selected-item");
-        }
-      }
-      updateGraphTitle(this);
-      let data = graphData[idx];
-      switch (data.type) {
-        case "line":
-          createLineChart(data);
-          break;
-        case "bar":
-          createBarChart(data);
-          break;
-      }
-      if (event.target.classList.contains("download-btn")) {
-        console.debug("downloading chart");
-        if (hasGraphChanged) {
-          console.debug("waiting for graph to update");
-          await new Promise(r => setTimeout(r, 1000));
-        }
-        window.chart.supportsForeignObject = false;
-        downloadChart(this);
-      }
-    };
-  }
+  // for (let item of allGraphItems) {
+  //   item.onclick = async function(event) {
+  //     let idx = [].indexOf.call(allGraphItems, this);
+  //     let hasGraphChanged = false;
+  //     for (let item of allGraphItems) {
+  //       if (item !== this) {
+  //         if (item.classList.contains("selected-item")) {
+  //           hasGraphChanged = true;
+  //           item.classList.remove("selected-item");
+  //         }
+  //       } else {
+  //         item.classList.add("selected-item");
+  //       }
+  //     }
+  //     updateGraphTitle(this);
+  //     let data = graphData[idx];
+  //     switch (data.type) {
+  //       case "line":
+  //         createLineChart(data);
+  //         break;
+  //       case "bar":
+  //         createBarChart(data);
+  //         break;
+  //     }
+  //     if (event.target.classList.contains("download-btn")) {
+  //       console.debug("downloading chart");
+  //       if (hasGraphChanged) {
+  //         console.debug("waiting for graph to update");
+  //         await new Promise(r => setTimeout(r, 1000));
+  //       }
+  //       window.chart.supportsForeignObject = false;
+  //       downloadChart(this);
+  //     }
+  //   };
+  // }
 }
 </script>
 
@@ -522,7 +526,7 @@ div.graph-list {
 
 div.graph-list > div.graph-item {
   width: 60%;
-  height: 6rem;
+  height: 4.8rem;
   background-color: rgb(234, 219, 196);
   margin-bottom: 1rem;
   display: inline-block;
@@ -541,7 +545,7 @@ div.graph-item > div {
 }
 
 div.graph-item > div.item-title {
-  height: 70%;
+  height: 60%;
   border-bottom: 2px dashed rgba(0, 0, 0, 0.2);
   position: relative;
   padding-left: 1rem;
@@ -567,7 +571,27 @@ div.graph-item > div.item-title > div:nth-child(2) {
 }
 
 div.graph-item > div:not(.item-title) {
-  height: 30%;
+  height: 40%;
+  padding-top: 0.2rem;
+}
+
+.button {
+  font-family: "Sniglet", cursive;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  background-color: rgba(240, 240, 240, 1);
+  border-color: rgba(0, 0, 0, 0.8);
+  border-width: 2px;
+  font-size: 1.5rem;
+  color: rgba(0, 0, 0, 0.8);
+  z-index: 3;
+  position: relative;
+}
+
+.button:hover {
+  background-color: rgba(240, 240, 240, 1);
+  border-color: #42b983;
+  color: #42b983;
 }
 
 div.graph-item > div:not(.item-title) > div {
@@ -658,7 +682,15 @@ div.stats {
 
 #statsContainer {
   width: 100%;
+  position: relative;
   height: calc(100% - 85px);
+}
+
+#downloadChartBtn {
+  position: absolute;
+  left: 3rem;
+  bottom: 4.5rem;
+  font-size: 1.2rem;
 }
 
 </style>
