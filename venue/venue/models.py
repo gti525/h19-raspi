@@ -117,9 +117,9 @@ class Seller(models.Model):
 
         return success, 'Spectacle publié avec succès'
 
-    def end_sale(self, show):
+    def end_sale(self, show, publication):
         client = self.get_api_client()
-        success, message = client.end_sale(show)
+        success, message = client.end_sale(show, publication=publication)
 
         if not success:
             return success, message
