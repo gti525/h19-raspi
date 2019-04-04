@@ -27,9 +27,9 @@
         <hr>
         <div id="chartElement" class="ct-chart"></div>
         <div id="legend">
-          <div>Événement A</div>
-          <div>Événement B</div>
-          <div>Événement C</div>
+          <div>Scannés</div>
+          <div>Vendus</div>
+          <div>Total</div>
         </div>
       </div>
     </div>
@@ -46,7 +46,6 @@ const MAX_DOWNLOAD_RETRIES = 5;
 
 export default {
   name: "stats",
-  mounted: onLoad,
   data: () => {
     return {
       concerts: [],
@@ -54,20 +53,23 @@ export default {
     };
   },
   async created() {
+    this.statistics = {};
     let customActions = {
       stats: { methods: "GET", url: "shows/{id}/stats" },
       tickets: { methods: "GET", url: "shows/{id}/tickets" }
     };
     this.resource = this.$resource("shows/{id}", {}, customActions);
     this.resource.get().then(response => {
+      console.debug('resources', response.body);
       this.concerts = response.body;
+      onLoad(this);
     });
   },
   methods: {
     async getStats(id) {
-      this.resource.stats({ id: id }).then(response => {
+      return this.resource.stats({ id: id }).then(response => {
         if (response.status === 200) {
-          this.statistics = response.body;
+          this.statistics[id] = response.body;
         }
       });
     },
@@ -81,12 +83,13 @@ export default {
   }
 };
 
-function onLoad() {
+function onLoad(vue) {
   document.getElementById("app").classList.add("stats");
-  fetchGraphData()
+  fetchGraphData(vue)
     .then(graphData => {
-      createLineChart(graphData[0]);
-      prepareGraphAnimation(graphData[0]);
+      createBarChart(graphData[0]);
+      // createLineChart(graphData[0]); // deprecated
+      // prepareGraphAnimation(graphData[0]); // deprecated
       initListeners(graphData);
     })
     .catch(err => {
@@ -136,53 +139,38 @@ function downloadChart(chartItem) {
   }
 }
 
-function fetchGraphData() {
+/**
+ * Uses the 4 latest concerts
+ */
+function fetchGraphData(vue) {
   return new Promise(resolve => {
-    // TODO fetch data from backend
-    let defaultLabels = [
-      "Oct",
-      "Nov",
-      "Dec",
-      "Jan",
-      "Fev",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Aout",
-      "Sept"
-    ];
-    resolve([
-      {
-        labels: defaultLabels.slice(),
-        series: [
-          [880, 850, 600, 750, 800, 750, 950, 800, 860, 740, 820, 960],
-          [800, 820, 780, 550, 600, 650, 720, 800, 860, 690, 650, 680],
-          [930, 960, 860, 850, 800, 760, 920, 900, 920, 820, 800, 760]
-        ],
-        type: "line"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [
-          [88, 85, 60, 75, 80, 75, 95, 80, 86, 74, 82, 96],
-          [80, 82, 78, 55, 60, 65, 72, 80, 86, 69, 65, 68],
-          [93, 96, 86, 85, 80, 76, 92, 90, 92, 82, 80, 76]
-        ],
-        type: "bar"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [[880, 850, 600, 750, 800, 750, 950, 800, 860, 740, 820, 960]],
-        type: "line"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [[88, 85, 60, 75, 80, 75, 95, 80, 86, 74, 82, 96]],
-        type: "bar"
-      }
-    ]);
+    console.log(vue.concerts);
+    let latestConcerts = vue.concerts
+      .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+      .slice(0,4);
+    Promise.all(latestConcerts.map(c => {
+      return new Promise(res => {
+        vue.getStats(c.id).then(res);
+      });
+    })).then(() => {
+      console.debug('statistics', vue.statistics);
+      ///////// HARDCOCED DATA FOR PRETTY RESULTS (REMOVE FOR DEMO) /////////
+      latestConcerts.forEach(c => {
+        vue.statistics[c.id].sold = parseInt(vue.statistics[c.id].total*Math.random());
+        vue.statistics[c.id].scanned = parseInt(vue.statistics[c.id].sold*Math.random());
+      });
+      ///////////////////////////////////////////////////////////////////////
+      resolve([
+        {
+          labels: latestConcerts.map(c => c.name),
+          series: [
+            latestConcerts.map(c => vue.statistics[c.id].scanned),
+            latestConcerts.map(c => vue.statistics[c.id].sold),
+            latestConcerts.map(c => vue.statistics[c.id].total)
+          ]
+        }
+      ]);
+    });
   });
 }
 
@@ -208,23 +196,20 @@ function updateGraphTitle(chartItem) {
 }
 
 function createBarChart(data) {
-  var options = {
-    seriesBarDistance: 10,
+  let options = {
+    seriesBarDistance: 20,
     chartPadding: {
-      left: 25
+      left: 35
     },
     axisY: {
-      low: 0,
-      high: 100,
-      type: Chartist.FixedScaleAxis,
-      ticks: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
       onlyInteger: true,
       showLabel: true
     },
+    // stackBars: true,
     plugins: [
       Chartist.plugins.ctAxisTitle({
         axisY: {
-          axisTitle: "Taux d'assistance (%)",
+          axisTitle: "Nombre de Billets",
           axisClass: "ct-axis-title",
           offset: {
             x: 0,
@@ -237,7 +222,13 @@ function createBarChart(data) {
     ]
   };
 
-  window.chart = new Chartist.Bar(".ct-chart", data, options);
+  window.chart = new Chartist.Bar(".ct-chart", data, options).on('draw', drawnData => {
+    if(drawnData.type === 'bar') {
+      drawnData.element.attr({
+        style: 'stroke-width: 20px'
+      });
+    }
+  });
 }
 
 function createLineChart(data) {
@@ -609,6 +600,7 @@ div.side-panel {
   vertical-align: middle;
   width: 50%;
   background-color: rgba(0, 0, 0, 0.3);
+  padding-bottom: 5rem;
 }
 
 div.side-panel.right-panel {
@@ -668,4 +660,5 @@ div.stats {
   width: 100%;
   height: calc(100% - 85px);
 }
+
 </style>
