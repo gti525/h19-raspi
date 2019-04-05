@@ -87,17 +87,19 @@ export default {
       this.newConcert = concert;
       this.selected = this.newConcert.venue;
     },
-    async getConcerts() {
-      this.resource.get().then(response => {
-        this.concerts = response.body;
-      });
+    updateConcerts(newArray) {
+      this.concerts = newArray;
     },
     async remove(concertArray) {
       if (confirm("Êtes-vous certain?"))
         this.resource.remove({ id: concertArray.concert.id }).then(response => {
-          if (response.status === "204") {
-            this.$delete(this.concerts, concertArray.index);
-          }
+          this.$notify({
+            group: "foo",
+            title: "Réussi!",
+            text: "Spectacle effacé avec succès",
+            type: "success"
+          });
+          this.$delete(this.concerts, concertArray.index);
         });
     }
   },
@@ -110,7 +112,6 @@ export default {
       this.concerts = response.body.sort(
         (c1, c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime()
       );
-      console.log(this.concerts);
     });
   }
 };

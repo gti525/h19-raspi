@@ -88,7 +88,6 @@ export default {
             text: "Spectacle publié avec succès!",
             type: "success"
           });
-          this.$emit("getConcerts");
         })
         .catch(err => {
           this.$notify({
