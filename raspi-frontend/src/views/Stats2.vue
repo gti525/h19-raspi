@@ -79,6 +79,18 @@ export default {
       });
     },
     downloadChart() {
+      if(!this.concerts.filter(c => c.isVisible).length) {
+        Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          timer: 5000,
+          showConfirmButton: false
+        }).fire({
+          type: 'info',
+          title: 'Huh-uh.. le graphique est vide'
+        });
+        return;
+      }
       let filename = 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0];
       let imgOptions = {
         outputImage: {
@@ -188,7 +200,9 @@ function fetchGraphData(vue) {
       ///////////////////////////////////////////////////////////////////////
       resolve([
         {
-          labels: visibleConcerts.map(c => c.name),
+          labels: visibleConcerts.map(c => c.name.length > 20 
+            ?(c.name.substring(0,18) + '...') 
+            :c.name),
           series: [
             visibleConcerts.map(c => vue.statistics[c.id].scanned),
             visibleConcerts.map(c => vue.statistics[c.id].sold),
@@ -264,7 +278,25 @@ function createBarChart(data) {
         x: drawnData.x + drawnData.width / 2, 'text-anchor': 'middle'
       });
     }
-});
+    // drawing individual bar value labels
+    if (drawnData.type === "bar") {
+      let value = parseInt(drawnData.element.attr('ct:value'));
+      if (value) {
+        let label = new Chartist.Svg('text');
+        label.addClass('ct-custom-bar-label');
+        label.text(value.toString());
+        let x, y;
+        label.attr({
+          x: x = (drawnData.x1 + drawnData.element.width() / 2),
+          y: y = (drawnData.y1 + drawnData.element.height() * -1 - 10),
+          'text-anchor': 'middle',
+          fill: 'rgba(0,0,0,0.4)',
+          transform: `rotate(-45 ${x},${y})`
+        });
+        drawnData.group.append(label);
+      }
+    }
+  });
 }
 
 function createLineChart(data) {
@@ -480,6 +512,9 @@ function initListeners(graphData) {
 }
 .ct-chart-bar .ct-label.ct-horizontal.ct-end {
   text-anchor: middle !important;
+}
+.ct-custom-bar-label {
+  font-size: 11px;
 }
 </style>
 
