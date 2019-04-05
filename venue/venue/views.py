@@ -179,7 +179,6 @@ class TicketValidatorResult(APIView):
         for ticket in request.data:
             instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
             if instance:
-                print('EXISTS')
                 instance.scanned = True
                 instance.save()
 
