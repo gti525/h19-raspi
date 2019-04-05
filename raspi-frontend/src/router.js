@@ -20,6 +20,8 @@ export default new Router({
           next({
             name: "venue"
           });
+        } else {
+          next();
         }
       }
     },
@@ -38,6 +40,8 @@ export default new Router({
               type: "error"
             })
           );
+        } else {
+          next();
         }
       }
     },
