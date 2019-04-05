@@ -6,7 +6,8 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import Show, Venue, Ticket, Seller, ShowPublication
+from .models import Show, Venue, Ticket
+from .models import Seller, ShowPublication, TicketValidator
 from .serializer import ShowSerializer, VenueSerializer, TicketSerializer
 from .serializer import ShowStatsSerializer
 
@@ -161,8 +162,34 @@ class ShowSellerDeleteView(APIView):
         return Response({'messages': messages}, status=status_code)
 
 
+class TicketValidatorFetch(APIView):
+
+    def get(self, request):
+        validator = get_object_or_404(TicketValidator, user=request.user)
+
+        tickets = validator.show.get_tickets()
+
+        serializer = TicketSerializer(data=tickets)
+
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class TicketValidatorResult(APIView):
+
+    def post(self, request):
+        serializer = TicketSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # for ticket in serializer:
+        #     instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
+        #     if instance and ticket['status'] in sold_status:
+        #         instance.sold = True
+        #         instance.save()
 
 
 

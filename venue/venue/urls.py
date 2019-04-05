@@ -64,4 +64,6 @@ urlpatterns = [
     path('venues/', views.VenueListCreateView.as_view(), name='venue-list'),
     path('venues/<int:pk>', views.VenueDetailView.as_view(), name='venue-detail'),
     path('tickets/', views.TicketListView.as_view(), name='ticket-list'),
+    path('validator/fetch', views.TicketValidatorFetch.as_view(), name='validator-fetch'),
+    path('validator/result', views.TicketValidatorResult.as_view(), name='validator-result'),
 ]
