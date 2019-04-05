@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 from .models import Show, Venue, Ticket, Seller, ShowPublication
-
+from .models import TicketValidator
 
 class ShowInline(admin.StackedInline):
     model = Show
@@ -76,3 +76,4 @@ admin.site.register(Venue, VenueAdmin)
 admin.site.register(Ticket)
 admin.site.register(Seller)
 admin.site.register(ShowPublication)
+admin.site.register(TicketValidator)
