@@ -285,6 +285,10 @@ div.form-data-row > input,
   border: 1px solid darkgray;
 }
 
+#roomSelectionContainer > select {
+  background-color: white;
+}
+
 #roomSelectionContainer > select:not(.valid-selection) {
   color: gray;
 }

@@ -1,22 +1,23 @@
 <template>
   <div id="statsContainer">
+    <button id="downloadChartBtn"
+          class="btn btn-primary button"
+          @click="downloadChart"
+    >Télécharger</button>
     <div class="stats">
       <div class="side-panel left-panel">
-        <div v-if="statistics">
-          <span>Vendus:{{statistics}}</span>
-          <b-button variant="link" @click="seeStats()">Console</b-button>
-        </div>
         <div>
-          <h2 id="graphSelectionTitle">Rapports Disponibles</h2>
+          <h2 id="graphSelectionTitle">Mes Spectacles</h2>
           <div class="graph-list">
             <div class="graph-item selected-item" v-for="concert in concerts" :key="concert.id">
               <div class="item-title">
                 <div>{{concert.name}}</div>
-                <b-button variant="link" @click="getStats(concert.id)">Voir stats</b-button>
               </div>
               <div>
                 <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
-                <div class="download-btn">Télécharger</div>
+                <div v-bind:id="'graphVisibilityBtn' + concert.id" 
+                  @click="toggleGraphElemVisibility(concert.id)" 
+                  class="graph-visibility-trigger">Ajouter</div>
               </div>
             </div>
           </div>
@@ -27,9 +28,9 @@
         <hr>
         <div id="chartElement" class="ct-chart"></div>
         <div id="legend">
-          <div>Événement A</div>
-          <div>Événement B</div>
-          <div>Événement C</div>
+          <div>Scannés</div>
+          <div>Vendus</div>
+          <div>Total</div>
         </div>
       </div>
     </div>
@@ -41,12 +42,12 @@ import Chartist from "chartist";
 import AxisTitle from "chartist-plugin-axistitle";
 import chartist2image from "chartist-to-image";
 import "../libs/chartlist/chartist.css";
+import Swal from 'sweetalert2';
 
 const MAX_DOWNLOAD_RETRIES = 5;
 
 export default {
   name: "stats",
-  mounted: onLoad,
   data: () => {
     return {
       concerts: [],
@@ -54,25 +55,80 @@ export default {
     };
   },
   async created() {
+    this.statistics = {};
     let customActions = {
       stats: { methods: "GET", url: "shows/{id}/stats" },
       tickets: { methods: "GET", url: "shows/{id}/tickets" }
     };
     this.resource = this.$resource("shows/{id}", {}, customActions);
     this.resource.get().then(response => {
+      console.debug('resources', response.body);
       this.concerts = response.body;
+      onLoad(this);
     });
   },
   methods: {
     async getStats(id) {
-      this.resource.stats({ id: id }).then(response => {
+      return this.resource.stats({ id: id }).then(response => {
         if (response.status === 200) {
-          this.statistics = response.body;
+          this.statistics[id] = response.body;
         }
       });
     },
-    seeStats() {
-      console.log(JSON.stringify(this.statistics));
+    downloadChart() {
+      let imgOptions = {
+        outputImage: {
+          quality: 1,
+          name: 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0]
+        },
+        download: true,
+        format: "jpeg",
+        log: true
+      };
+      genImage();
+      async function genImage(){
+        await chartist2image.toJpeg("chartElement", imgOptions, window.chart).then(
+          res => {
+            // failover if download fails - might not work in localhost
+            fetch(res)
+              .then(r => r.blob())
+              .then(blob => {
+                console.log(blob);
+                Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  timer: 5000,
+                  showConfirmButton: false
+                }).fire({
+                  type: 'info',
+                  html: `&nbsp;Problème de téléchargement?&nbsp;<a href="${URL.createObjectURL(blob)}">Cliquer ici</a>`
+                }
+              );
+            });
+        });
+      }
+    },
+    toggleGraphElemVisibility(concertId) {
+      console.debug('toggling visibility', concertId);
+      let concertToTrigger = this.concerts.find(c => c.id == concertId);
+      let nbOfVisibleConcerts = this.concerts.filter(c => c.isVisible).length;
+      if(!concertToTrigger.isVisible && nbOfVisibleConcerts >= 4
+        || concertToTrigger.isVisible && nbOfVisibleConcerts <= 1 && false) { // unactivated minimum
+        Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          timer: 5000,
+          showConfirmButton: false
+        }).fire({
+          type: 'warning',
+          title: concertToTrigger.isVisible 
+            ?'Minimum 1 concert par graphique'
+            :'Maximum 4 concerts par graphique'
+        });
+      } else {
+        concertToTrigger.isVisible = !concertToTrigger.isVisible;
+        fetchGraphData(this).then(graphData => createBarChart(graphData[0]));
+      }
     }
   },
   beforeRouteLeave(from, to, next) {
@@ -81,12 +137,16 @@ export default {
   }
 };
 
-function onLoad() {
+function onLoad(vue) {
   document.getElementById("app").classList.add("stats");
-  fetchGraphData()
+  vue.concerts
+    .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+    .forEach((c, idx) => c.isVisible = idx < 4);
+  fetchGraphData(vue)
     .then(graphData => {
-      createLineChart(graphData[0]);
-      prepareGraphAnimation(graphData[0]);
+      createBarChart(graphData[0]);
+      // createLineChart(graphData[0]); // deprecated
+      // prepareGraphAnimation(graphData[0]); // deprecated
       initListeners(graphData);
     })
     .catch(err => {
@@ -94,95 +154,43 @@ function onLoad() {
     });
 }
 
-function downloadChart(chartItem) {
-  let imgOptions = {
-    outputImage: {
-      quality: 1,
-      name: getGraphTitle(chartItem).join(" (") + ")"
-    },
-    download: true,
-    format: "jpeg",
-    log: false
-  };
-
-  let nbOfTriesLeft = 3;
-  tryToRenderJpeg();
-
-  function tryToRenderJpeg() {
-    console.debug("trying to render jpeg");
-    chartist2image
-      .toJpeg("chartElement", imgOptions, window.chart)
-      .then(base64Img => {
-        window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-        console.debug("jpeg rendering success");
-      })
-      .catch(async function(err) {
-        if (nbOfTriesLeft-- > 0) {
-          await new Promise(r => setTimeout(r, 0));
-          tryToRenderJpeg();
-        } else {
-          if (window.downloadTriesLeft > 0) {
-            window.downloadTriesLeft--;
-            console.debug("download failure - retrying");
-            // sometimes only simulating a new click will get the file to download
-            // seems to be a bug in the library
-            chartItem.querySelector("div.download-btn").click();
-          } else {
-            window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-            console.error(err);
-          }
-        }
-      });
-  }
-}
-
-function fetchGraphData() {
+function fetchGraphData(vue) {
   return new Promise(resolve => {
-    // TODO fetch data from backend
-    let defaultLabels = [
-      "Oct",
-      "Nov",
-      "Dec",
-      "Jan",
-      "Fev",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Aout",
-      "Sept"
-    ];
-    resolve([
-      {
-        labels: defaultLabels.slice(),
-        series: [
-          [880, 850, 600, 750, 800, 750, 950, 800, 860, 740, 820, 960],
-          [800, 820, 780, 550, 600, 650, 720, 800, 860, 690, 650, 680],
-          [930, 960, 860, 850, 800, 760, 920, 900, 920, 820, 800, 760]
-        ],
-        type: "line"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [
-          [88, 85, 60, 75, 80, 75, 95, 80, 86, 74, 82, 96],
-          [80, 82, 78, 55, 60, 65, 72, 80, 86, 69, 65, 68],
-          [93, 96, 86, 85, 80, 76, 92, 90, 92, 82, 80, 76]
-        ],
-        type: "bar"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [[880, 850, 600, 750, 800, 750, 950, 800, 860, 740, 820, 960]],
-        type: "line"
-      },
-      {
-        labels: defaultLabels.slice(),
-        series: [[88, 85, 60, 75, 80, 75, 95, 80, 86, 74, 82, 96]],
-        type: "bar"
-      }
-    ]);
+    console.debug('concerts', vue.concerts);
+    let visibleConcerts = vue.concerts
+      .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+      .filter(c => c.isVisible);
+    Promise.all(visibleConcerts.map(c => {
+      return new Promise(res => {
+        vue.getStats(c.id).then(res);
+      });
+    })).then(() => {
+      vue.concerts.forEach(c => {
+        let visibilityTriggerBtn = document
+          .getElementById('graphVisibilityBtn' + c.id);
+        visibilityTriggerBtn.textContent = c.isVisible
+          ?'Retirer'
+          :'Ajouter';
+        visibilityTriggerBtn.classList[c.isVisible ?'add' :'remove']('visible-in-graph');
+      });
+      console.debug('statistics', vue.statistics);
+      ///////// HARDCOCED DATA FOR PRETTY RESULTS (REMOVE FOR DEMO) /////////
+      // visibleConcerts.forEach(c => {
+      //   vue.statistics[c.id].sold = parseInt(vue.statistics[c.id].total*Math.random());
+      //   vue.statistics[c.id].scanned = parseInt(vue.statistics[c.id].sold*Math.random());
+      // });
+      ///////////////////////////////////////////////////////////////////////
+      resolve([
+        {
+          labels: visibleConcerts.map(c => c.name),
+          series: [
+            visibleConcerts.map(c => vue.statistics[c.id].scanned),
+            visibleConcerts.map(c => vue.statistics[c.id].sold),
+            visibleConcerts.map(c => vue.statistics[c.id].total)
+          ]
+        }
+      ]);
+    });
   });
 }
 
@@ -207,24 +215,24 @@ function updateGraphTitle(chartItem) {
   }
 }
 
+function SuppressForeignObjectPlugin(chart) {
+  window.chart.supportsForeignObject = false;
+}
+
 function createBarChart(data) {
-  var options = {
-    seriesBarDistance: 10,
+  let options = {
+    seriesBarDistance: 20,
     chartPadding: {
-      left: 25
+      left: 35
     },
     axisY: {
-      low: 0,
-      high: 100,
-      type: Chartist.FixedScaleAxis,
-      ticks: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
       onlyInteger: true,
-      showLabel: true
+      showLabel: true,
     },
     plugins: [
       Chartist.plugins.ctAxisTitle({
         axisY: {
-          axisTitle: "Taux d'assistance (%)",
+          axisTitle: "Nombre de Billets",
           axisClass: "ct-axis-title",
           offset: {
             x: 0,
@@ -233,11 +241,24 @@ function createBarChart(data) {
           textAnchor: "middle",
           flipTitle: true
         }
-      })
+      }),
+      SuppressForeignObjectPlugin
     ]
   };
 
-  window.chart = new Chartist.Bar(".ct-chart", data, options);
+  window.chart = new Chartist.Bar(".ct-chart", data, options).on('draw', drawnData => {
+    if(drawnData.type === 'bar') {
+      drawnData.element.attr({
+        style: 'stroke-width: 20px'
+      });
+    }
+    // forcing x-axis titles to be centered
+    if(drawnData.type === 'label' && drawnData.axis.units.pos === 'x') {
+      drawnData.element.attr({
+        x: drawnData.x + drawnData.width / 2, 'text-anchor': 'middle'
+      });
+    }
+});
 }
 
 function createLineChart(data) {
@@ -406,41 +427,41 @@ function initListeners(graphData) {
     "div.graph-list > div.graph-item"
   );
   window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-  for (let item of allGraphItems) {
-    item.onclick = async function(event) {
-      let idx = [].indexOf.call(allGraphItems, this);
-      let hasGraphChanged = false;
-      for (let item of allGraphItems) {
-        if (item !== this) {
-          if (item.classList.contains("selected-item")) {
-            hasGraphChanged = true;
-            item.classList.remove("selected-item");
-          }
-        } else {
-          item.classList.add("selected-item");
-        }
-      }
-      updateGraphTitle(this);
-      let data = graphData[idx];
-      switch (data.type) {
-        case "line":
-          createLineChart(data);
-          break;
-        case "bar":
-          createBarChart(data);
-          break;
-      }
-      if (event.target.classList.contains("download-btn")) {
-        console.debug("downloading chart");
-        if (hasGraphChanged) {
-          console.debug("waiting for graph to update");
-          await new Promise(r => setTimeout(r, 1000));
-        }
-        window.chart.supportsForeignObject = false;
-        downloadChart(this);
-      }
-    };
-  }
+  // for (let item of allGraphItems) {
+  //   item.onclick = async function(event) {
+  //     let idx = [].indexOf.call(allGraphItems, this);
+  //     let hasGraphChanged = false;
+  //     for (let item of allGraphItems) {
+  //       if (item !== this) {
+  //         if (item.classList.contains("selected-item")) {
+  //           hasGraphChanged = true;
+  //           item.classList.remove("selected-item");
+  //         }
+  //       } else {
+  //         item.classList.add("selected-item");
+  //       }
+  //     }
+  //     updateGraphTitle(this);
+  //     let data = graphData[idx];
+  //     switch (data.type) {
+  //       case "line":
+  //         createLineChart(data);
+  //         break;
+  //       case "bar":
+  //         createBarChart(data);
+  //         break;
+  //     }
+  //     if (event.target.classList.contains("download-btn")) {
+  //       console.debug("downloading chart");
+  //       if (hasGraphChanged) {
+  //         console.debug("waiting for graph to update");
+  //         await new Promise(r => setTimeout(r, 1000));
+  //       }
+  //       window.chart.supportsForeignObject = false;
+  //       downloadChart(this);
+  //     }
+  //   };
+  // }
 }
 </script>
 
@@ -450,6 +471,9 @@ function initListeners(graphData) {
   fill: rgba(0, 0, 0, 0.4);
   color: rgba(0, 0, 0, 0.4);
   font-size: 0.8rem;
+}
+.ct-chart-bar .ct-label.ct-horizontal.ct-end {
+  text-anchor: middle !important;
 }
 </style>
 
@@ -506,12 +530,16 @@ function initListeners(graphData) {
   margin-left: calc(50% - 260px);
 }
 
-div.download-btn {
+div.graph-visibility-trigger {
   color: #3d9970 !important;
   cursor: pointer;
 }
 
-div.download-btn:hover {
+div.graph-visibility-trigger.visible-in-graph {
+  color: lightcoral !important;
+}
+
+div.graph-visibility-trigger:hover {
   text-decoration: underline;
 }
 
@@ -527,11 +555,12 @@ div.download-btn:hover {
 
 div.graph-list {
   height: 80%;
+  padding-bottom: 4rem;
 }
 
 div.graph-list > div.graph-item {
   width: 60%;
-  height: 6rem;
+  height: 4.8rem;
   background-color: rgb(234, 219, 196);
   margin-bottom: 1rem;
   display: inline-block;
@@ -550,24 +579,28 @@ div.graph-item > div {
 }
 
 div.graph-item > div.item-title {
-  height: 70%;
+  height: 60%;
   border-bottom: 2px dashed rgba(0, 0, 0, 0.2);
   position: relative;
   padding-left: 1rem;
+  padding-right: 1rem;
+  white-space: nowrap;
 }
 
 div.graph-item > div.item-title > div {
-  height: 50%;
   color: #36454f;
   font-family: "Nunito Sans", sans-serif;
   text-shadow: 1px 1px px black;
   text-align: left;
   letter-spacing: 0.8px;
+  text-overflow: ellipsis;
 }
 
 div.graph-item > div.item-title > div:nth-child(1) {
   font-size: 1.4rem;
   margin-top: 0.5rem;
+  overflow-x: hidden;
+  height: 75%;
 }
 
 div.graph-item > div.item-title > div:nth-child(2) {
@@ -576,7 +609,27 @@ div.graph-item > div.item-title > div:nth-child(2) {
 }
 
 div.graph-item > div:not(.item-title) {
-  height: 30%;
+  height: 40%;
+  padding-top: 0.1rem;
+}
+
+.button {
+  font-family: "Sniglet", cursive;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  background-color: rgba(240, 240, 240, 1);
+  border-color: rgba(0, 0, 0, 0.8);
+  border-width: 2px;
+  font-size: 1.5rem;
+  color: rgba(0, 0, 0, 0.8);
+  z-index: 3;
+  position: relative;
+}
+
+.button:hover {
+  background-color: rgba(240, 240, 240, 1);
+  border-color: #42b983;
+  color: #42b983;
 }
 
 div.graph-item > div:not(.item-title) > div {
@@ -599,16 +652,20 @@ div.graph-item > div:not(.item-title) > div:nth-child(2) {
 
 div.ct-chart {
   background-color: rgb(234, 219, 196) !important;
-  height: 75%;
+  height: 70vh !important;
+  min-height: 19rem !important;
+  max-height: 70vh !important;
   padding: 1.5rem 0.5rem 0 0 !important;
   border-radius: 0.2rem;
 }
 
 div.side-panel {
   display: table-cell;
-  vertical-align: middle;
+  vertical-align: top;
   width: 50%;
   background-color: rgba(0, 0, 0, 0.3);
+  padding-bottom: 5rem;
+  padding-top: 2rem;
 }
 
 div.side-panel.right-panel {
@@ -666,6 +723,15 @@ div.stats {
 
 #statsContainer {
   width: 100%;
+  position: relative;
   height: calc(100% - 85px);
 }
+
+#downloadChartBtn {
+  position: fixed;
+  left: 3rem;
+  bottom: 4.5rem;
+  font-size: 1.2rem;
+}
+
 </style>
