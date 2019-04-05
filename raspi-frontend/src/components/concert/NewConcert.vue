@@ -63,7 +63,6 @@
 <script>
 import $ from "jquery";
 import datetimepicker from "jquery-datetimepicker";
-// import './../../../node_modules/js-datepicker/dist/datepicker.min.css';
 import "./../../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css";
 import { required, minLength } from "vuelidate/lib/validators";
 
@@ -89,7 +88,7 @@ export default {
     name: { required }
   },
   mounted: function() {
-    prepareDatePicker();
+    prepareDatePicker(this);
     window.newConcert = this.newConcert;
     if(this.newConcert.venue) {
       this.onVenueChange();
@@ -107,12 +106,9 @@ export default {
   },
   methods: {
     getConcertDate(concert) {
-      return concert.date || moment("YYYY-MM-DDTHH:MM");
+      return this.$moment(concert.date || new Date()).format("YYYY-MM-DD HH:mm");
     },
     async submit() {
-      this.newConcert.date = this.$moment(this.newConcert.date).format(
-        "YYYY-MM-DDTHH:MM"
-      );
       this.newConcert.venue = this.selected;
       if (this.newConcert.id) {
         this.resource.update({ id: this.newConcert.id }, this.newConcert).then(
@@ -181,14 +177,12 @@ export default {
   }
 };
 
-function prepareDatePicker() {
-  let that = this;
-
+function prepareDatePicker(vue) {
   const picker = $("input.date-selector[type=text]").datetimepicker({
     format: "Y-m-d H:i",
     inline: false,
     onChangeDateTime: function(dp, $input) {
-      window.newConcert.date = new Date($input.val()).toString();
+      vue.newConcert.date = new Date($input.val()).toISOString();
     }
   });
 }

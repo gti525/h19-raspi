@@ -69,7 +69,7 @@ export default {
       this.createEditConcert = !this.createEditVenue;
       this.newConcert = {
         name: "",
-        date: this.$moment().format("YYYY-MM-DD HH:MM"),
+        date: this.$moment(new Date()).format("YYYY-MM-DD HH:mm"),
         description: "",
         venue: "",
         ticket_price: "",

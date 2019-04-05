@@ -14,7 +14,7 @@
                 <div>{{concert.name}}</div>
               </div>
               <div>
-                <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
+                <div>Période : {{getConcertDate(concert)}}</div>
                 <div v-bind:id="'graphVisibilityBtn' + concert.id" 
                   @click="toggleGraphElemVisibility(concert.id)" 
                   class="graph-visibility-trigger">Ajouter</div>
@@ -68,6 +68,9 @@ export default {
     });
   },
   methods: {
+    getConcertDate(concert) {
+      return this.$moment(concert.date || new Date()).format("YYYY-MM-DD HH:mm");
+    },
     async getStats(id) {
       return this.resource.stats({ id: id }).then(response => {
         if (response.status === 200) {
@@ -103,7 +106,7 @@ export default {
                     showConfirmButton: false
                   }).fire({
                     type: 'info',
-                    html: `&nbsp;Problème de téléchargement?&nbsp;<a download="${filename}.jpg" href="${this.result}">Cliquer ici</a>`
+                    html: `&nbsp;Problème de téléchargement?&nbsp;<a download="${filename}.jpg" href="${this.result}">Cliquez ici</a>`
                   });
                 };
                 reader.readAsDataURL(blob) ;
