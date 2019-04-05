@@ -52,3 +52,12 @@ class ShowStatsSerializer(serializers.Serializer):
     sold = serializers.IntegerField()
     scanned = serializers.IntegerField()
     total = serializers.IntegerField()
+
+
+class TicketScannedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = (
+            'uuid',
+            'scanned',
+        )
