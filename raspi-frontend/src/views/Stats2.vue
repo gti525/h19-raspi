@@ -264,7 +264,25 @@ function createBarChart(data) {
         x: drawnData.x + drawnData.width / 2, 'text-anchor': 'middle'
       });
     }
-});
+    // drawing individual bar value labels
+    if (drawnData.type === "bar") {
+      let value = parseInt(drawnData.element.attr('ct:value'));
+      if (value) {
+        let label = new Chartist.Svg('text');
+        label.addClass('ct-custom-bar-label');
+        label.text(value.toString());
+        let x, y;
+        label.attr({
+          x: x = (drawnData.x1 + drawnData.element.width() / 2),
+          y: y = (drawnData.y1 + drawnData.element.height() * -1 - 10),
+          'text-anchor': 'middle',
+          fill: 'rgba(0,0,0,0.4)',
+          transform: `rotate(-45 ${x},${y})`
+        });
+        drawnData.group.append(label);
+      }
+    }
+  });
 }
 
 function createLineChart(data) {
@@ -480,6 +498,9 @@ function initListeners(graphData) {
 }
 .ct-chart-bar .ct-label.ct-horizontal.ct-end {
   text-anchor: middle !important;
+}
+.ct-custom-bar-label {
+  font-size: 11px;
 }
 </style>
 
