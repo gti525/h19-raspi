@@ -1,0 +1,6 @@
+---
+- name: Add cron job to send validated tickets to Gestionnaire de salle
+  cron:
+    name: "Send tickets"
+    job: "docker exec -i -t validator_web ./manage.py close_validation > /dev/null"
+    state: present

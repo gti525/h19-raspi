@@ -9,12 +9,12 @@ class TicketValidatorConfig(AppConfig):
     verbose_name = "Système de gestion de tickets"
 
     def ready(self):
-        print('READYYYY')
+        print('Fetch tickets...')
         from .models import Ticket
 
         try:
             response = requests.get(
-                settings.VENUE_URL + 'tickets/',
+                settings.VENUE_URL + 'validator/fetch',
                 headers={
                     'Authorization': 'Token %s' % settings.VENUE_TOKEN,
                 }
@@ -28,5 +28,8 @@ class TicketValidatorConfig(AppConfig):
                     }
                 )
 
-        except Exception:
+        except Exception as e:
+            print(e)
             pass
+
+        print('Done')

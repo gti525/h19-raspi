@@ -6,9 +6,10 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import Show, Venue, Ticket, Seller, ShowPublication
+from .models import Show, Venue, Ticket
+from .models import Seller, ShowPublication, TicketValidator
 from .serializer import ShowSerializer, VenueSerializer, TicketSerializer
-from .serializer import ShowStatsSerializer
+from .serializer import ShowStatsSerializer, TicketScannedSerializer
 
 
 class ShowDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -161,10 +162,27 @@ class ShowSellerDeleteView(APIView):
         return Response({'messages': messages}, status=status_code)
 
 
+class TicketValidatorFetch(APIView):
+
+    def get(self, request):
+        validator = get_object_or_404(TicketValidator, user=request.user)
+        tickets = validator.show.get_tickets()
+        serializer = TicketSerializer(tickets, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class TicketValidatorResult(APIView):
 
+    def post(self, request):
 
+        for ticket in request.data:
+            instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
+            if instance:
+                instance.scanned = True
+                instance.save()
+
+        return Response()
 
 
 

@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
 
 
 from venue import clients as seller_clients
@@ -187,3 +188,15 @@ class ShowPublication(models.Model):
         return success, message
 
 
+class TicketValidator(models.Model):
+    show = models.ForeignKey(
+        Show,
+        on_delete=models.CASCADE,
+        related_name='validators',
+    )
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='validators',
+    )

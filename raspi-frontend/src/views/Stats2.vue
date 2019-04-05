@@ -14,7 +14,7 @@
                 <div>{{concert.name}}</div>
               </div>
               <div>
-                <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
+                <div>Période : {{getConcertDate(concert)}}</div>
                 <div v-bind:id="'graphVisibilityBtn' + concert.id" 
                   @click="toggleGraphElemVisibility(concert.id)" 
                   class="graph-visibility-trigger">Ajouter</div>
@@ -68,6 +68,9 @@ export default {
     });
   },
   methods: {
+    getConcertDate(concert) {
+      return this.$moment(concert.date || new Date()).format("YYYY-MM-DD HH:mm");
+    },
     async getStats(id) {
       return this.resource.stats({ id: id }).then(response => {
         if (response.status === 200) {
@@ -103,7 +106,7 @@ export default {
                     showConfirmButton: false
                   }).fire({
                     type: 'info',
-                    html: `&nbsp;Problème de téléchargement?&nbsp;<a download="${filename}.jpg" href="${this.result}">Cliquer ici</a>`
+                    html: `&nbsp;Problème de téléchargement?&nbsp;<a download="${filename}.jpg" href="${this.result}">Cliquez ici</a>`
                   });
                 };
                 reader.readAsDataURL(blob) ;
@@ -143,7 +146,7 @@ export default {
 function onLoad(vue) {
   document.getElementById("app").classList.add("stats");
   vue.concerts
-    .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+    .sort((c1,c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime())
     .forEach((c, idx) => c.isVisible = idx < 4);
   fetchGraphData(vue)
     .then(graphData => {
@@ -161,7 +164,7 @@ function fetchGraphData(vue) {
   return new Promise(resolve => {
     console.debug('concerts', vue.concerts);
     let visibleConcerts = vue.concerts
-      .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+      .sort((c1,c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime())
       .filter(c => c.isVisible);
     Promise.all(visibleConcerts.map(c => {
       return new Promise(res => {
