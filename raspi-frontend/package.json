@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.11",
+    "bootstrap-vue": "^2.0.0-rc.16",
     "chartist": "^0.11.0",
     "chartist-plugin-axistitle": "0.0.4",
     "chartist-to-image": "^1.2.1",
