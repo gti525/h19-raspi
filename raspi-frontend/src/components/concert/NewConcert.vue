@@ -31,7 +31,7 @@
         </div>
         <div class="form-data-row" id="roomSelectionContainer">
           <select @change="onVenueChange" v-model="selected" required>
-            <option disabled hidden value>Salle de Spectacle</option>
+            <option disabled hidden value="-1">Salle de Spectacle</option>
             <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
           </select>
         </div>
@@ -91,6 +91,9 @@ export default {
   mounted: function() {
     prepareDatePicker();
     window.newConcert = this.newConcert;
+    if(this.newConcert.venue) {
+      this.onVenueChange();
+    }
     $("#newVenue").slideDown(400);
     document
       .getElementById("newConcertOverlay")
