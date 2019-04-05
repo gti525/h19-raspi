@@ -166,7 +166,7 @@ class TicketValidatorFetch(APIView):
 
     def get(self, request):
         validator = get_object_or_404(TicketValidator, user=request.user)
-        tickets = validator.show.get_tickets()
+        tickets = validator.show.get_tickets().filter(sold=True)
         serializer = TicketSerializer(tickets, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
