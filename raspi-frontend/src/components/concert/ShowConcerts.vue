@@ -16,17 +16,16 @@
             class="concert-sellers"
             v-for="seller in concert.sellers"
             :key="seller"
-          >Vente #{{seller}} &nbsp;</span>
+          >Vente {{seller}} &nbsp;</span>
           <span class="concert-sellers" v-if="concert.sellers.length == 0">Info non disponible</span>
           <br>
-          <div v-if="concert.publications.length > 0">
-            <span class="concert-venues">Status:</span>&nbsp;
-            <span
-              class="concert-sellers"
-              v-for="publish in concert.publications"
-              :key="publish.seller"
-            >{{publish.seller}}: {{publish.status}} &nbsp;</span>
-          </div>
+          <span class="concert-venues">Status:</span>&nbsp;
+          <span
+            class="concert-sellers"
+            v-for="publish in concert.publications"
+            :key="publish.seller"
+          >{{publish.seller}}: {{publish.status}} &nbsp;</span>
+          <span class="concert-sellers" v-if="concert.publications.length == 0">Info non disponible</span>
         </div>
       </div>
       <div class="concert-cell">
