@@ -107,7 +107,8 @@ export default {
       this.venues = response.body;
     });
     this.resource.get().then(response => {
-      this.concerts = response.body;
+      this.concerts = response.body
+        .sort((c1,c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime());
     });
   }
 };

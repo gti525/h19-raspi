@@ -146,7 +146,7 @@ export default {
 function onLoad(vue) {
   document.getElementById("app").classList.add("stats");
   vue.concerts
-    .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+    .sort((c1,c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime())
     .forEach((c, idx) => c.isVisible = idx < 4);
   fetchGraphData(vue)
     .then(graphData => {
@@ -164,7 +164,7 @@ function fetchGraphData(vue) {
   return new Promise(resolve => {
     console.debug('concerts', vue.concerts);
     let visibleConcerts = vue.concerts
-      .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+      .sort((c1,c2) => new Date(c2.date).getTime() - new Date(c1.date).getTime())
       .filter(c => c.isVisible);
     Promise.all(visibleConcerts.map(c => {
       return new Promise(res => {
