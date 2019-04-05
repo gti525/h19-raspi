@@ -15,13 +15,35 @@ export default new Router({
       path: "/",
       name: "home",
       component: Home,
-      props: true
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next({
+            name: "venue"
+          });
+        } else {
+          next();
+        }
+      }
     },
     {
       path: "/signin",
       name: "sign-up",
       component: SignUp,
-      props: true
+      beforeEnter: (to, from, next) => {
+        if (localStorage.getItem("token")) {
+          next(
+            { name: "venue" },
+            Vue.notify({
+              group: "foo",
+              title: "Erreur",
+              text: "Vous êtes déjà connecté",
+              type: "error"
+            })
+          );
+        } else {
+          next();
+        }
+      }
     },
     {
       path: "/venues",
