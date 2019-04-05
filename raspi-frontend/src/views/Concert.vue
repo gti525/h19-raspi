@@ -75,7 +75,7 @@ export default {
         ticket_price: "",
         sellers: []
       };
-      this.selected = "";
+      this.selected = -1;
     },
     cancelCreateEdit(concert) {
       if (concert) {
