@@ -25,7 +25,7 @@ class Command(BaseCommand):
         for ticket_chunk in tickets_list:
 
             try:
-                response = requests.get(
+                response = requests.post(
                     settings.VENUE_URL + 'validator/result',
                     headers={
                         'Authorization': 'Token %s' % settings.VENUE_TOKEN,

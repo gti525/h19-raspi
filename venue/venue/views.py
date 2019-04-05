@@ -183,13 +183,16 @@ class TicketValidatorResult(APIView):
         serializer = TicketSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-        # for ticket in serializer:
-        #     instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
-        #     if instance and ticket['status'] in sold_status:
-        #         instance.sold = True
-        #         instance.save()
+        for ticket in serializer:
+            instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
+            if instance and ticket['scanned'] in [True, 'True']:
+                instance.scanned = True
+                instance.save()
 
 
 
