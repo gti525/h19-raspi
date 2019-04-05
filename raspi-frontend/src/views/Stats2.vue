@@ -652,9 +652,9 @@ div.graph-item > div:not(.item-title) > div:nth-child(2) {
 
 div.ct-chart {
   background-color: rgb(234, 219, 196) !important;
-  height: 70vh !important;
+  height: 65vh !important;
   min-height: 19rem !important;
-  max-height: 70vh !important;
+  max-height: 65vh !important;
   padding: 1.5rem 0.5rem 0 0 !important;
   border-radius: 0.2rem;
 }
