@@ -6,7 +6,10 @@
       </div>
       <div class="concert-cell">
         <div class="left-aligned">
-          <div class="concert-name">{{concert.name}}&nbsp;&nbsp;<span>{{concert.ticket_price}}$/billet</span></div>
+          <div class="concert-name">
+            {{concert.name}}&nbsp;&nbsp;
+            <span>{{concert.ticket_price}}$/billet</span>
+          </div>
           <div class="concert-time">{{getConcertDate(concert)}}</div>
           <span class="concert-venues">Vendeurs:</span>&nbsp;
           <span
@@ -15,6 +18,13 @@
             :key="seller"
           >Vente #{{seller}} &nbsp;</span>
           <span class="concert-sellers" v-if="concert.sellers.length == 0">Info non disponible</span>
+          <br>
+          <span class="concert-venues">Status:</span>&nbsp;
+          <span
+            class="concert-sellers"
+            v-for="publish in concert.publications"
+            :key="publish.seller"
+          >{{publish.seller}}: {{publish.status}} &nbsp;</span>
         </div>
       </div>
       <div class="concert-cell">
@@ -49,7 +59,9 @@ export default {
   },
   methods: {
     getConcertDate(concert) {
-      return this.$moment(concert.date || new Date()).format("YYYY-MM-DD HH:mm");
+      return this.$moment(concert.date || new Date()).format(
+        "YYYY-MM-DD HH:mm"
+      );
     },
     edit(concert) {
       this.$emit("editConcert", concert);
@@ -97,26 +109,34 @@ export default {
         (venueNames.length > MAX_STR_LENGTH ? "..." : "")
       );
     },
-    endSale(concert) {
-      this.$http
-        .post("shows/" + concert.id + "/endsale")
-        .then(() => {
-          this.$notify({
-            group: "foo",
-            title: "Réussi!",
-            text: "Spectacle fermé avec succès!",
-            type: "success"
+    async endSale(concert) {
+      let confirmationMessage = "Fermer au site de vente ";
+      if (concert.sellers.length == 1) {
+        confirmationMessage += concert.sellers[0];
+      } else {
+        confirmationMessage += "1 et 2";
+      }
+      if (confirm(confirmationMessage)) {
+        this.$http
+          .post("shows/" + concert.id + "/endsale")
+          .then(() => {
+            this.$notify({
+              group: "foo",
+              title: "Réussi!",
+              text: "Spectacle fermé avec succès!",
+              type: "success"
+            });
+          })
+          .catch(err => {
+            this.$notify({
+              group: "foo",
+              title: "Erreur!",
+              text: err.body,
+              type: "error"
+            });
           });
-          this.$emit("getConcerts");
-        })
-        .catch(err => {
-          this.$notify({
-            group: "foo",
-            title: "Erreur!",
-            text: err.body,
-            type: "error"
-          });
-        });
+        await this.$emit("getConcerts");
+      }
     },
     isSalesOver(concert) {
       let isOver = false;
@@ -125,7 +145,6 @@ export default {
           isOver = true;
         }
       });
-      console.log(concert.name + " sales: " + isOver);
       return isOver;
     },
     isCurrentlyPublished(concert) {
@@ -135,7 +154,6 @@ export default {
           isPublished = true;
         }
       });
-      console.log(concert.name + " publised: " + isPublished);
       return isPublished;
     }
   }
