@@ -6,12 +6,8 @@
     >Télécharger</button>
     <div class="stats">
       <div class="side-panel left-panel">
-        <!-- <div v-if="statistics">
-          <span>Vendus:{{statistics}}</span>
-          <b-button variant="link" @click="seeStats()">Console</b-button>
-        </div> -->
         <div>
-          <h2 id="graphSelectionTitle">Rapports Disponibles</h2>
+          <h2 id="graphSelectionTitle">Mes Concerts</h2>
           <div class="graph-list">
             <div class="graph-item selected-item" v-for="concert in concerts" :key="concert.id">
               <div class="item-title">
@@ -20,7 +16,9 @@
               </div>
               <div>
                 <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
-                <div class="toggle-graph-visibility">Retirer</div>
+                <div v-bind:id="'graphVisibilityBtn' + concert.id" 
+                  @click="toggleGraphElemVisibility(concert.id)" 
+                  class="graph-visibility-trigger">Ajouter</div>
               </div>
             </div>
           </div>
@@ -78,9 +76,6 @@ export default {
         }
       });
     },
-    seeStats() {
-      console.log(JSON.stringify(this.statistics));
-    },
     downloadChart() {
       let imgOptions = {
         outputImage: {
@@ -91,7 +86,6 @@ export default {
         format: "jpeg",
         log: true
       };
-
       genImage();
       async function genImage(){
         await chartist2image.toJpeg("chartElement", imgOptions, window.chart).then(
@@ -114,6 +108,28 @@ export default {
             });
         });
       }
+    },
+    toggleGraphElemVisibility(concertId) {
+      console.debug('toggling visibility', concertId);
+      let concertToTrigger = this.concerts.find(c => c.id == concertId);
+      let nbOfVisibleConcerts = this.concerts.filter(c => c.isVisible).length;
+      if(!concertToTrigger.isVisible && nbOfVisibleConcerts >= 4
+        || concertToTrigger.isVisible && nbOfVisibleConcerts <= 1 && false) { // unactivated minimum
+        Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          timer: 5000,
+          showConfirmButton: false
+        }).fire({
+          type: 'warning',
+          title: concertToTrigger.isVisible 
+            ?'Minimum 1 concert par graphique'
+            :'Maximum 4 concerts par graphique'
+        });
+      } else {
+        concertToTrigger.isVisible = !concertToTrigger.isVisible;
+        fetchGraphData(this).then(graphData => createBarChart(graphData[0]));
+      }
     }
   },
   beforeRouteLeave(from, to, next) {
@@ -124,6 +140,9 @@ export default {
 
 function onLoad(vue) {
   document.getElementById("app").classList.add("stats");
+  vue.concerts
+    .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
+    .forEach((c, idx) => c.isVisible = idx < 4);
   fetchGraphData(vue)
     .then(graphData => {
       createBarChart(graphData[0]);
@@ -136,34 +155,39 @@ function onLoad(vue) {
     });
 }
 
-/**
- * Uses the 4 latest concerts
- */
 function fetchGraphData(vue) {
   return new Promise(resolve => {
-    console.log(vue.concerts);
-    let latestConcerts = vue.concerts
+    console.debug('concerts', vue.concerts);
+    let visibleConcerts = vue.concerts
       .sort((c1,c2) => new Date(c2).getTime() - new Date(c1).getTime())
-      .slice(0,4);
-    Promise.all(latestConcerts.map(c => {
+      .filter(c => c.isVisible);
+    Promise.all(visibleConcerts.map(c => {
       return new Promise(res => {
         vue.getStats(c.id).then(res);
       });
     })).then(() => {
+      vue.concerts.forEach(c => {
+        let visibilityTriggerBtn = document
+          .getElementById('graphVisibilityBtn' + c.id);
+        visibilityTriggerBtn.textContent = c.isVisible
+          ?'Retirer'
+          :'Ajouter';
+        visibilityTriggerBtn.classList[c.isVisible ?'add' :'remove']('visible-in-graph');
+      });
       console.debug('statistics', vue.statistics);
       ///////// HARDCOCED DATA FOR PRETTY RESULTS (REMOVE FOR DEMO) /////////
-      latestConcerts.forEach(c => {
+      visibleConcerts.forEach(c => {
         vue.statistics[c.id].sold = parseInt(vue.statistics[c.id].total*Math.random());
         vue.statistics[c.id].scanned = parseInt(vue.statistics[c.id].sold*Math.random());
       });
       ///////////////////////////////////////////////////////////////////////
       resolve([
         {
-          labels: latestConcerts.map(c => c.name),
+          labels: visibleConcerts.map(c => c.name),
           series: [
-            latestConcerts.map(c => vue.statistics[c.id].scanned),
-            latestConcerts.map(c => vue.statistics[c.id].sold),
-            latestConcerts.map(c => vue.statistics[c.id].total)
+            visibleConcerts.map(c => vue.statistics[c.id].scanned),
+            visibleConcerts.map(c => vue.statistics[c.id].sold),
+            visibleConcerts.map(c => vue.statistics[c.id].total)
           ]
         }
       ]);
@@ -204,9 +228,8 @@ function createBarChart(data) {
     },
     axisY: {
       onlyInteger: true,
-      showLabel: true
+      showLabel: true,
     },
-    // stackBars: true,
     plugins: [
       Chartist.plugins.ctAxisTitle({
         axisY: {
@@ -230,7 +253,13 @@ function createBarChart(data) {
         style: 'stroke-width: 20px'
       });
     }
-  });
+    // forcing x-axis titles to be centered
+    if(drawnData.type === 'label' && drawnData.axis.units.pos === 'x') {
+      drawnData.element.attr({
+        x: drawnData.x + drawnData.width / 2, 'text-anchor': 'middle'
+      });
+    }
+});
 }
 
 function createLineChart(data) {
@@ -444,6 +473,9 @@ function initListeners(graphData) {
   color: rgba(0, 0, 0, 0.4);
   font-size: 0.8rem;
 }
+.ct-chart-bar .ct-label.ct-horizontal.ct-end {
+  text-anchor: middle !important;
+}
 </style>
 
 <style scoped>
@@ -499,12 +531,16 @@ function initListeners(graphData) {
   margin-left: calc(50% - 260px);
 }
 
-div.toggle-graph-visibility {
+div.graph-visibility-trigger {
   color: #3d9970 !important;
   cursor: pointer;
 }
 
-div.toggle-graph-visibility:hover {
+div.graph-visibility-trigger.visible-in-graph {
+  color: lightcoral !important;
+}
+
+div.graph-visibility-trigger:hover {
   text-decoration: underline;
 }
 
