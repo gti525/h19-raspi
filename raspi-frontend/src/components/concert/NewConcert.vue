@@ -90,6 +90,7 @@ export default {
   mounted: function() {
     prepareDatePicker(this);
     window.newConcert = this.newConcert;
+    window.initialConcert = Object.assign({}, this.newConcert);
     if(this.newConcert.venue) {
       this.onVenueChange();
     }
@@ -160,7 +161,13 @@ export default {
         );
       }
     },
+    resetValues() {
+      for(let prop in window.initialConcert) {
+        this.newConcert[prop] = window.initialConcert[prop];
+      }
+    },
     cancel() {
+      this.resetValues();
       let that = this;
       $("#newVenue").slideUp(400, function() {
         that.$emit("cancelCreateEdit");

@@ -62,6 +62,7 @@ export default {
     }
   },
   mounted: function() {
+    window.initialVenue = Object.assign({}, this.newVenue);
     $('#newVenue').slideDown(400);
     document.getElementById('newVenueOverlay').classList.remove('hidden-overlay');
     document.getElementById('newVenueOverlay').classList.add('visible-overlay');
@@ -117,7 +118,13 @@ export default {
         );
       }
     },
+    resetValues() {
+      for(let prop in window.initialVenue) {
+        this.newVenue[prop] = window.initialVenue[prop];
+      }
+    },
     cancel() {
+      this.resetValues();
       let that = this;
       $('#newVenue').slideUp(400, function() {
         that.$emit("cancelCreateEdit");
