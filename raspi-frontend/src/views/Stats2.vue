@@ -188,7 +188,9 @@ function fetchGraphData(vue) {
       ///////////////////////////////////////////////////////////////////////
       resolve([
         {
-          labels: visibleConcerts.map(c => c.name),
+          labels: visibleConcerts.map(c => c.name.length > 20 
+            ?(c.name.substring(0,18) + '...') 
+            :c.name),
           series: [
             visibleConcerts.map(c => vue.statistics[c.id].scanned),
             visibleConcerts.map(c => vue.statistics[c.id].sold),
