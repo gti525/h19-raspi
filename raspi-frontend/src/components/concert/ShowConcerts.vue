@@ -6,7 +6,7 @@
       </div>
       <div class="concert-cell">
         <div class="left-aligned">
-          <div class="concert-name">{{concert.name}}: {{concert.ticket_price}}$</div>
+          <div class="concert-name">{{concert.name}}&nbsp;&nbsp;<span>{{concert.ticket_price}}$/billet</span></div>
           <div class="concert-time">{{getConcertDate(concert)}}</div>
           <span class="concert-venues">Vendeurs:</span>&nbsp;
           <span
@@ -177,12 +177,13 @@ div.concert-row > .concert-cell .concert-name {
   font-size: 1.2rem;
 }
 
-div.concert-row > .concert-cell .concert-time {
-  padding-bottom: 0.5rem;
+div.concert-row > .concert-cell .concert-name > span {
+  font-weight: normal;
+  font-size: 0.9rem;
 }
 
-div.concert-row > .concert-cell .concert-description {
-  /* font-style: italic; */
+div.concert-row > .concert-cell .concert-time {
+  padding-bottom: 0.5rem;
 }
 
 div.concert-row > .concert-cell .concert-venues {
