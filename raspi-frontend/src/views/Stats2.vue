@@ -79,6 +79,18 @@ export default {
       });
     },
     downloadChart() {
+      if(!this.concerts.filter(c => c.isVisible).length) {
+        Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          timer: 5000,
+          showConfirmButton: false
+        }).fire({
+          type: 'info',
+          title: 'Huh-uh.. le graphique est vide'
+        });
+        return;
+      }
       let filename = 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0];
       let imgOptions = {
         outputImage: {
