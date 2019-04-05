@@ -22,7 +22,7 @@
           ></textarea>
         </div>
         <div class="form-data-row">
-          <input class="date-selector" type="text" placeholder="Date du concert">
+          <input class="date-selector" type="text" placeholder="Date du concert" v-vind:value="getConcertDate(newConcert)">
         </div>
         <div class="form-data-row" id="roomSelectionContainer">
           <select @change="onVenueChange" v-model="selected" required>
@@ -39,14 +39,14 @@
           >
         </div>
         <div class="form-data-row" id="roomSelectionContainer">
-          <div class="form-group">
-            <input type="checkbox" id="equipe1" value="1" v-model="newConcert.sellers">
+          <div id="equipeCheckContainer" class="form-group">
             <label for="equipe1">Vente 1</label>
-            <input type="checkbox" id="equipe2" value="2" v-model="newConcert.sellers">
+            <input type="checkbox" id="equipe1" value="1" v-model="newConcert.sellers">
             <label for="equipe2">Vente 2</label>
+            <input type="checkbox" id="equipe2" value="2" v-model="newConcert.sellers">
           </div>
         </div>
-        <span>{{newConcert.date | moment("YYYY-MM-DDTHH:MM")}}</span>
+        <!-- <span>{{newConcert.date | moment("YYYY-MM-DDTHH:MM")}}</span> -->
         <div class="control">
           <b-button variant="primary" @click="submit()">Soumettre</b-button>
           <b-button variant="danger" @click="cancel()">Cancel</b-button>
@@ -100,6 +100,9 @@ export default {
     next();
   },
   methods: {
+    getConcertDate(concert) {
+      return concert.date || moment("YYYY-MM-DDTHH:MM");
+    },
     async submit() {
       this.newConcert.date = this.$moment(this.newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
@@ -226,7 +229,7 @@ function prepareDatePicker() {
   background-color: rgba(250, 250, 250, 1);
   border-radius: 2rem;
   padding: 1rem 1.5rem;
-  height: 450px;
+  height: 475px;
   width: 495px;
   display: inline-block;
   border: 3px solid black;
@@ -334,7 +337,23 @@ button.btn.btn-primary + button {
 div.control {
   text-align: left;
   padding-left: 0.8rem;
-  padding-top: 18px;
 }
+
+#equipeCheckContainer {
+  margin-bottom: 0;
+}
+
+#equipeCheckContainer > * {
+  cursor: pointer;
+}
+
+#equipeCheckContainer label {
+  margin: 0.2rem 0.5rem;
+}
+
+#equipeCheckContainer input:first-of-type {
+  margin-right: 0.5rem;
+}
+
 </style>
 
