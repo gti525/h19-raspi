@@ -112,7 +112,7 @@ footer {
   top: 0;
   left: 0;
   width: 100vw;
-  z-index: 90000;
+  z-index: 1000;
 }
 
 #nav a {
