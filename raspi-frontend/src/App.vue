@@ -61,6 +61,7 @@ export default {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: 85px; /* must match nav height */
 }
 
 footer {
@@ -107,8 +108,11 @@ footer {
   height: 85px;
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0px 0px 9px 9px rgba(0, 0, 0, 0.5);
-  z-index: 2;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 90000;
 }
 
 #nav a {

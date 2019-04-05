@@ -7,7 +7,7 @@
     <div class="stats">
       <div class="side-panel left-panel">
         <div>
-          <h2 id="graphSelectionTitle">Mes Concerts</h2>
+          <h2 id="graphSelectionTitle">Mes Spectacles</h2>
           <div class="graph-list">
             <div class="graph-item selected-item" v-for="concert in concerts" :key="concert.id">
               <div class="item-title">
@@ -556,6 +556,7 @@ div.graph-visibility-trigger:hover {
 
 div.graph-list {
   height: 80%;
+  padding-bottom: 4rem;
 }
 
 div.graph-list > div.graph-item {
