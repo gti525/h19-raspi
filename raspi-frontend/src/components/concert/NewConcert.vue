@@ -22,7 +22,12 @@
           ></textarea>
         </div>
         <div class="form-data-row">
-          <input class="date-selector" type="text" placeholder="Date du concert" v-vind:value="getConcertDate(newConcert)">
+          <input
+            class="date-selector"
+            type="text"
+            placeholder="Date du concert"
+            v-bind:value="getConcertDate(newConcert)"
+          >
         </div>
         <div class="form-data-row" id="roomSelectionContainer">
           <select @change="onVenueChange" v-model="selected" required>
@@ -68,12 +73,11 @@ export default {
   props: {
     newConcert: Object,
     resource: Object,
-    venues: Array
+    venues: Array,
+    selected: Number
   },
   data: () => {
-    return {
-      selected: ""
-    };
+    return {};
   },
   validations: {
     newConcert: {
@@ -179,7 +183,7 @@ function prepareDatePicker() {
   let that = this;
 
   const picker = $("input.date-selector[type=text]").datetimepicker({
-    format: "Y-m-d H:i",
+    format: "YYYY-MM-DDTHH:MM",
     inline: false,
     onChangeDateTime: function(dp, $input) {
       window.newConcert.date = new Date($input.val()).toString();
@@ -354,6 +358,5 @@ div.control {
 #equipeCheckContainer input:first-of-type {
   margin-right: 0.5rem;
 }
-
 </style>
 

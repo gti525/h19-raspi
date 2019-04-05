@@ -20,6 +20,7 @@
           @remove="remove"
           :venues="venues"
           :resource="resource"
+          :selected="selected"
         />
         <div class="col-md-12 mx-auto show-concert-container">
           <ShowConcerts
@@ -52,7 +53,8 @@ export default {
       newConcert: {},
       createEditConcert: false,
       venues: [],
-      concerts: []
+      concerts: [],
+      selected: ""
     };
   },
   mounted: function() {
@@ -69,10 +71,11 @@ export default {
         name: "",
         date: new Date(),
         description: "",
-        venue: this.venues[0],
+        venue: "",
         ticket_price: "",
         sellers: []
       };
+      this.selected = "";
     },
     cancelCreateEdit(concert) {
       if (concert) {
@@ -82,6 +85,7 @@ export default {
     },
     editConcert(concert) {
       this.newConcert = concert;
+      this.selected = this.newConcert.venue;
     },
     async getConcerts() {
       this.resource.get().then(response => {
