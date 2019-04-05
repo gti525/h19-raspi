@@ -76,10 +76,11 @@ export default {
       });
     },
     downloadChart() {
+      let filename = 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0];
       let imgOptions = {
         outputImage: {
           quality: 1,
-          name: 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0]
+          name: filename
         },
         download: true,
         format: "jpeg",
@@ -90,21 +91,23 @@ export default {
         await chartist2image.toJpeg("chartElement", imgOptions, window.chart).then(
           res => {
             // failover if download fails - might not work in localhost
-            fetch(res)
+            fetch(res.content)
               .then(r => r.blob())
               .then(blob => {
-                console.log(blob);
-                Swal.mixin({
-                  toast: true,
-                  position: 'top-end',
-                  timer: 5000,
-                  showConfirmButton: false
-                }).fire({
-                  type: 'info',
-                  html: `&nbsp;Problème de téléchargement?&nbsp;<a href="${URL.createObjectURL(blob)}">Cliquer ici</a>`
-                }
-              );
-            });
+                var reader = new FileReader();
+                reader.onload = function() {
+                  Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    timer: 5000,
+                    showConfirmButton: false
+                  }).fire({
+                    type: 'info',
+                    html: `&nbsp;Problème de téléchargement?&nbsp;<a download="${filename}.jpg" href="${this.result}">Cliquer ici</a>`
+                  });
+                };
+                reader.readAsDataURL(blob) ;
+              });
         });
       }
     },
