@@ -28,6 +28,7 @@ class Show(models.Model):
     image_url = models.CharField(max_length=250, null=True, blank=True)
 
     ticket_price = models.FloatField()
+    sellers = models.ManyToManyField('Seller')
 
     venue = models.ForeignKey(
         Venue,
@@ -116,9 +117,9 @@ class Seller(models.Model):
 
         return success, 'Spectacle publié avec succès'
 
-    def end_sale(self, show):
+    def end_sale(self, show, publication):
         client = self.get_api_client()
-        success, message = client.end_sale(show)
+        success, message = client.end_sale(show, publication=publication)
 
         if not success:
             return success, message
@@ -141,12 +142,16 @@ class ShowPublication(models.Model):
     SALE_ENDED = 2
 
     STATUS = (
-        (CREATED, _('CREATED')),
-        (ON_SALE, _('ON SALE')),
-        (SALE_ENDED, _('SALE ENDED')),
+        (CREATED, _('Créé')),
+        (ON_SALE, _('En vente')),
+        (SALE_ENDED, _('Vente terminée')),
     )
 
-    show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    show = models.ForeignKey(
+        Show,
+        on_delete=models.CASCADE,
+        related_name='publications',
+    )
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     tickets = models.ManyToManyField(Ticket)
 

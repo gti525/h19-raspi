@@ -1,45 +1,59 @@
 <template>
-<div>
-  <div id="newConcertOverlay"></div>
-  <div id="newVenue" style="display: none">
-    <h2>Créer un Concert</h2>
-    <form id="venueForm" v-on:submit.prevent="submit()">
-      <div class="form-data-row">
-        <input
-          v-model="newConcert.name"
-          type="text"
-          name="name"
-          autocomplete="off"
-          placeholder="Nom du concert"
-        >
-      </div>
-      <div class="form-data-row">
-        <textarea
-          v-model="newConcert.description"
-          type="text"
-          name="description"
-          placeholder="Description du concert"
-        ></textarea>
-      </div>
-      <div class="form-data-row">
-        <input class="date-selector" type="text" placeholder="Date du concert">
-      </div>
-      <div class="form-data-row" id="roomSelectionContainer">
-        <select @change=onVenueChange v-model="selected" required>
-          <option disabled hidden value="">Salle de Spectacle</option>
-          <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
-        </select>
-      </div>
-      <div class="form-data-row">
-        <input placeholder="Prix du Billet" v-model="newConcert.ticket_price" type="number" name="price">
-      </div>
-      <div class="control">
-        <b-button variant="primary" @click="submit()">Soumettre</b-button>
-        <b-button variant="danger" @click="cancel()">Cancel</b-button>
-      </div>
-    </form>
+  <div>
+    <div id="newConcertOverlay"></div>
+    <div id="newVenue" style="display: none">
+      <h2>Créer un Concert</h2>
+      <form id="venueForm" v-on:submit.prevent="submit()">
+        <div class="form-data-row">
+          <input
+            v-model="newConcert.name"
+            type="text"
+            name="name"
+            autocomplete="off"
+            placeholder="Nom du concert"
+          >
+        </div>
+        <div class="form-data-row">
+          <textarea
+            v-model="newConcert.description"
+            type="text"
+            name="description"
+            placeholder="Description du concert"
+          ></textarea>
+        </div>
+        <div class="form-data-row">
+          <input class="date-selector" type="text" placeholder="Date du concert">
+        </div>
+        <div class="form-data-row" id="roomSelectionContainer">
+          <select @change="onVenueChange" v-model="selected" required>
+            <option disabled hidden value>Salle de Spectacle</option>
+            <option v-for="venue in venues" :key="venue.id" :value="venue.id">{{venue.name}}</option>
+          </select>
+        </div>
+        <div class="form-data-row">
+          <input
+            placeholder="Prix du Billet"
+            v-model="newConcert.ticket_price"
+            type="number"
+            name="price"
+          >
+        </div>
+        <div class="form-data-row" id="roomSelectionContainer">
+          <div class="form-group">
+            <input type="checkbox" id="equipe1" value="1" v-model="newConcert.sellers">
+            <label for="equipe1">Vente 1</label>
+            <input type="checkbox" id="equipe2" value="2" v-model="newConcert.sellers">
+            <label for="equipe2">Vente 2</label>
+          </div>
+        </div>
+        <span>{{newConcert.date | moment("YYYY-MM-DDTHH:MM")}}</span>
+        <div class="control">
+          <b-button variant="primary" @click="submit()">Soumettre</b-button>
+          <b-button variant="danger" @click="cancel()">Cancel</b-button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -58,8 +72,8 @@ export default {
   },
   data: () => {
     return {
-      selected: ''
-    }
+      selected: ""
+    };
   },
   validations: {
     newConcert: {
@@ -75,20 +89,24 @@ export default {
     prepareDatePicker();
     window.newConcert = this.newConcert;
     $("#newVenue").slideDown(400);
-    document.getElementById('newConcertOverlay').classList.remove('hidden-overlay');
-    document.getElementById('newConcertOverlay').classList.add('visible-overlay');
+    document
+      .getElementById("newConcertOverlay")
+      .classList.remove("hidden-overlay");
+    document
+      .getElementById("newConcertOverlay")
+      .classList.add("visible-overlay");
   },
   beforeRouteLeave(from, to, next) {
     next();
   },
   methods: {
     async submit() {
-      this.newConcert.date = this.$moment(newConcert.date).format(
+      this.newConcert.date = this.$moment(this.newConcert.date).format(
         "YYYY-MM-DDTHH:MM"
       );
       this.newConcert.venue = this.selected;
       if (this.newConcert.id) {
-        this.resource.update({ id: newConcert.id }, newConcert).then(
+        this.resource.update({ id: this.newConcert.id }, this.newConcert).then(
           response => {
             if (response.status === 200) {
               this.$notify({
@@ -142,11 +160,14 @@ export default {
       $("#newVenue").slideUp(400, function() {
         that.$emit("cancelCreateEdit");
       });
-      document.getElementById('newConcertOverlay')
-        .classList.replace('visible-overlay', 'hidden-overlay');
+      document
+        .getElementById("newConcertOverlay")
+        .classList.replace("visible-overlay", "hidden-overlay");
     },
     onVenueChange() {
-      document.querySelector('#roomSelectionContainer > select').classList.add('valid-selection');
+      document
+        .querySelector("#roomSelectionContainer > select")
+        .classList.add("valid-selection");
     }
   }
 };
@@ -165,13 +186,12 @@ function prepareDatePicker() {
 </script>
 
 <style scoped>
-
 #newConcertOverlay {
   position: absolute;
   z-index: 19;
   height: 100%;
   width: 100%;
-  background-color: rgba(0,0,0,0.75);
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 #newConcertOverlay.visible-overlay {
@@ -254,7 +274,8 @@ div.form-data-row {
   position: relative;
 }
 
-div.form-data-row > input, #roomSelectionContainer > select {
+div.form-data-row > input,
+#roomSelectionContainer > select {
   display: inline-block;
   margin: 0 0.5rem;
   width: calc(100% - 1rem);
@@ -280,7 +301,8 @@ div.form-data-row > input.invalid-form-data {
   border: 1px solid #ff4136 !important;
 }
 
-div.form-data-row > input:focus, #roomSelectionContainer > select:focus {
+div.form-data-row > input:focus,
+#roomSelectionContainer > select:focus {
   outline: none; /* so no rectangle around rounded edges */
   border: 1px solid #0074d9;
 }

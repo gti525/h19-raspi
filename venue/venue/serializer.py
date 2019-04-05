@@ -1,12 +1,23 @@
 from rest_framework import serializers
 
-from .models import Ticket, Show, Venue
+from .models import Ticket, Show, Venue, ShowPublication
+
+
+class ShowPublicationSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source='get_status_display')
+    seller = serializers.StringRelatedField()
+
+    class Meta:
+        model = ShowPublication
+        fields = ('seller', 'status')
 
 
 class ShowSerializer(serializers.ModelSerializer):
+    publications = ShowPublicationSerializer(many=True, read_only=True)
+
     class Meta:
         model = Show
-        fields = '__all__'
+        fields = ('__all__')
 
 
 class VenueSerializer(serializers.ModelSerializer):
