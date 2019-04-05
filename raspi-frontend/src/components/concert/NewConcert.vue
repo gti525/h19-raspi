@@ -51,7 +51,6 @@
             <input type="checkbox" id="equipe2" value="2" v-model="newConcert.sellers">
           </div>
         </div>
-        <!-- <span>{{newConcert.date | moment("YYYY-MM-DDTHH:MM")}}</span> -->
         <div class="control">
           <b-button variant="primary" @click="submit()">Soumettre</b-button>
           <b-button variant="danger" @click="cancel()">Cancel</b-button>
@@ -183,7 +182,7 @@ function prepareDatePicker() {
   let that = this;
 
   const picker = $("input.date-selector[type=text]").datetimepicker({
-    format: "YYYY-MM-DDTHH:MM",
+    format: "Y-m-d H:i",
     inline: false,
     onChangeDateTime: function(dp, $input) {
       window.newConcert.date = new Date($input.val()).toString();
