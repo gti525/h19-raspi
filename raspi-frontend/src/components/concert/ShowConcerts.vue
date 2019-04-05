@@ -14,10 +14,7 @@
             v-for="seller in concert.sellers"
             :key="seller"
           >Vente #{{seller}} &nbsp;</span>
-          <span
-            class="concert-sellers"
-            v-if="concert.sellers.length == 0"
-          >Info non disponible</span>
+          <span class="concert-sellers" v-if="concert.sellers.length == 0">Info non disponible</span>
         </div>
       </div>
       <div class="concert-cell">
@@ -32,11 +29,8 @@
         <div class="concert-action-btn">
           <span @click="edit(concert)">Modifier</span>&nbsp;|&nbsp;
           <span @click="remove(concert)">Effacer</span>
-          <span v-if="!isCurrentlyPublished(concert) || !isSalesOver(concert)">&nbsp;|&nbsp;</span>
-          <span
-            v-if="!isCurrentlyPublished(concert) || !isSalesOver(concert)"
-            @click="publish(concert)"
-          >Publier</span>
+          <span v-if="!isCurrentlyPublished(concert)">&nbsp;|&nbsp;</span>
+          <span v-if="!isCurrentlyPublished(concert)" @click="publish(concert)">Publier</span>
           <span v-if="!isSalesOver(concert)">&nbsp;|&nbsp;</span>
           <span v-if="!isSalesOver(concert)" @click="endSale(concert)">Fermer Vente</span>
         </div>
@@ -128,6 +122,7 @@ export default {
           isOver = true;
         }
       });
+      console.log(concert.name + " sales: " + isOver);
       return isOver;
     },
     isCurrentlyPublished(concert) {
@@ -137,6 +132,7 @@ export default {
           isPublished = true;
         }
       });
+      console.log(concert.name + " publised: " + isPublished);
       return isPublished;
     }
   }
