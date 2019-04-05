@@ -45,6 +45,7 @@ import Chartist from "chartist";
 import AxisTitle from "chartist-plugin-axistitle";
 import chartist2image from "chartist-to-image";
 import "../libs/chartlist/chartist.css";
+import Swal from 'sweetalert2';
 
 const MAX_DOWNLOAD_RETRIES = 5;
 
@@ -84,42 +85,34 @@ export default {
       let imgOptions = {
         outputImage: {
           quality: 1,
-          name: 'RapportDeVentes_' + new Date().toString()
+          name: 'RapportDeVentes_' + new Date().toString().split(/\sGMT/)[0]
         },
         download: true,
         format: "jpeg",
-        log: false
+        log: true
       };
 
-      let nbOfTriesLeft = 3;
-      tryToRenderJpeg();
-
-      function tryToRenderJpeg() {
-        console.debug("trying to render jpeg");
-        chartist2image
-          .toJpeg("chartElement", imgOptions, window.chart)
-          .then(base64Img => {
-            window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-            console.debug("jpeg rendering success");
-          })
-          .catch(async function(err) {
-            if (nbOfTriesLeft-- > 0) {
-              await new Promise(r => setTimeout(r, 0));
-              tryToRenderJpeg();
-            } else {
-              if (window.downloadTriesLeft > 0) {
-                window.downloadTriesLeft--;
-                console.debug("download failure - retrying");
-                // sometimes only simulating a new click will get the file to download
-                // seems to be a bug in the library
-                document.getElementById("downloadChartBtn").click();
-              } else {
-                window.downloadTriesLeft = MAX_DOWNLOAD_RETRIES;
-                console.error(err);
-              }
-            }
-          }
-        );
+      genImage();
+      async function genImage(){
+        await chartist2image.toJpeg("chartElement", imgOptions, window.chart).then(
+          res => {
+            // failover if download fails - might not work in localhost
+            fetch(res)
+              .then(r => r.blob())
+              .then(blob => {
+                console.log(blob);
+                Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  timer: 5000,
+                  showConfirmButton: false
+                }).fire({
+                  type: 'info',
+                  html: `&nbsp;Problème de téléchargement?&nbsp;<a href="${URL.createObjectURL(blob)}">Cliquer ici</a>`
+                }
+              );
+            });
+        });
       }
     }
   },
@@ -199,6 +192,10 @@ function updateGraphTitle(chartItem) {
   }
 }
 
+function SuppressForeignObjectPlugin(chart) {
+  window.chart.supportsForeignObject = false;
+}
+
 function createBarChart(data) {
   let options = {
     seriesBarDistance: 20,
@@ -222,7 +219,8 @@ function createBarChart(data) {
           textAnchor: "middle",
           flipTitle: true
         }
-      })
+      }),
+      SuppressForeignObjectPlugin
     ]
   };
 
@@ -501,12 +499,12 @@ function initListeners(graphData) {
   margin-left: calc(50% - 260px);
 }
 
-div.download-btn {
+div.toggle-graph-visibility {
   color: #3d9970 !important;
   cursor: pointer;
 }
 
-div.download-btn:hover {
+div.toggle-graph-visibility:hover {
   text-decoration: underline;
 }
 
@@ -549,20 +547,24 @@ div.graph-item > div.item-title {
   border-bottom: 2px dashed rgba(0, 0, 0, 0.2);
   position: relative;
   padding-left: 1rem;
+  padding-right: 1rem;
+  white-space: nowrap;
 }
 
 div.graph-item > div.item-title > div {
-  height: 50%;
   color: #36454f;
   font-family: "Nunito Sans", sans-serif;
   text-shadow: 1px 1px px black;
   text-align: left;
   letter-spacing: 0.8px;
+  text-overflow: ellipsis;
 }
 
 div.graph-item > div.item-title > div:nth-child(1) {
   font-size: 1.4rem;
   margin-top: 0.5rem;
+  overflow-x: hidden;
+  height: 75%;
 }
 
 div.graph-item > div.item-title > div:nth-child(2) {
@@ -572,7 +574,7 @@ div.graph-item > div.item-title > div:nth-child(2) {
 
 div.graph-item > div:not(.item-title) {
   height: 40%;
-  padding-top: 0.2rem;
+  padding-top: 0.1rem;
 }
 
 .button {
@@ -614,17 +616,20 @@ div.graph-item > div:not(.item-title) > div:nth-child(2) {
 
 div.ct-chart {
   background-color: rgb(234, 219, 196) !important;
-  height: 75%;
+  height: 70vh !important;
+  min-height: 19rem !important;
+  max-height: 70vh !important;
   padding: 1.5rem 0.5rem 0 0 !important;
   border-radius: 0.2rem;
 }
 
 div.side-panel {
   display: table-cell;
-  vertical-align: middle;
+  vertical-align: top;
   width: 50%;
   background-color: rgba(0, 0, 0, 0.3);
   padding-bottom: 5rem;
+  padding-top: 2rem;
 }
 
 div.side-panel.right-panel {
@@ -687,7 +692,7 @@ div.stats {
 }
 
 #downloadChartBtn {
-  position: absolute;
+  position: fixed;
   left: 3rem;
   bottom: 4.5rem;
   font-size: 1.2rem;
