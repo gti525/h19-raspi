@@ -128,7 +128,7 @@ div.show-venue-container {
   position: relative;
   min-height: 100vh;
   padding-top: 6rem;
-  padding-left: 0
+  padding-left: 0;
 }
 
 #newVenueBtn {
@@ -136,5 +136,4 @@ div.show-venue-container {
   right: 5rem;
   top: 1.5rem;
 }
-
 </style>

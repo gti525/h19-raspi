@@ -4,9 +4,10 @@
     <div id="tableContainer">
       <div>
         <!-- <div class="button-bg"></div>
-        <div class="button-bar-bg"></div> -->
+        <div class="button-bar-bg"></div>-->
         <!-- <h2 class="instructions visible-instructions">Ajoutez un concert à votre calendrier</h2> -->
-        <button id="newConcertBtn"
+        <button
+          id="newConcertBtn"
           v-if="!createEditConcert"
           class="btn btn-primary button"
           @click="createConcert"
@@ -69,7 +70,8 @@ export default {
         date: new Date(),
         description: "",
         venue: this.venues[0],
-        ticket_price: 0
+        ticket_price: "",
+        sellers: []
       };
     },
     cancelCreateEdit(concert) {
@@ -81,6 +83,11 @@ export default {
     editConcert(concert) {
       this.newConcert = concert;
     },
+    async getConcerts() {
+      this.resource.get().then(response => {
+        this.concerts = response.body;
+      });
+    },
     async remove(concertArray) {
       if (confirm("Êtes-vous certain?"))
         this.resource.remove({ id: concertArray.concert.id }).then(response => {
@@ -88,21 +95,17 @@ export default {
             this.$delete(this.concerts, concertArray.index);
           }
         });
-      }
-    },
-    async created() {
-      let customActions = {
-        publish: { methods: "POST", url: "shows/{id}/publish" },
-        endSale: { methods: "POST", url: "shows/{id}/endsale" }
-      };
-      this.resource = this.$resource("shows/{id}", {}, customActions);
-      this.$http.get("venues/").then(response => {
-        this.venues = response.body;
-      });
-      this.resource.get().then(response => {
-        this.concerts = response.body;
-      });
     }
+  },
+  async created() {
+    this.resource = this.$resource("shows/{id}");
+    this.$http.get("venues/").then(response => {
+      this.venues = response.body;
+    });
+    this.resource.get().then(response => {
+      this.concerts = response.body;
+    });
+  }
 };
 </script>
 
@@ -177,7 +180,7 @@ div.show-concert-container {
   position: relative;
   min-height: 100vh;
   padding-top: 6rem;
-  padding-left: 0
+  padding-left: 0;
 }
 
 #newConcertBtn {
@@ -186,5 +189,4 @@ div.show-concert-container {
   top: 1.5rem;
   font-size: 1.2rem;
 }
-
 </style>
