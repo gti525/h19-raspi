@@ -11,9 +11,9 @@
         <span>|</span>
         <router-link to="/concerts">Spectacles</router-link>
         <span>|</span>
-        <router-link to="/stats">Stats</router-link>
-        <span>|</span>
-        <router-link to="/stats2">Stats2</router-link>
+        <!-- <router-link to="/stats">Stats</router-link>
+        <span>|</span> -->
+        <router-link to="/stats2">Stats</router-link>
         <span>|</span>
         <b-button variant="link" @click="logout()" id="logoutBtn">Déconnexion</b-button>
       </div>
