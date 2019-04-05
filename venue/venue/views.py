@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import Show, Venue, Ticket
 from .models import Seller, ShowPublication, TicketValidator
 from .serializer import ShowSerializer, VenueSerializer, TicketSerializer
-from .serializer import ShowStatsSerializer
+from .serializer import ShowStatsSerializer, TicketScannedSerializer
 
 
 class ShowDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -166,13 +166,8 @@ class TicketValidatorFetch(APIView):
 
     def get(self, request):
         validator = get_object_or_404(TicketValidator, user=request.user)
-
         tickets = validator.show.get_tickets()
-
-        serializer = TicketSerializer(data=tickets)
-
-        if not serializer.is_valid():
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = TicketSerializer(tickets, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -180,21 +175,15 @@ class TicketValidatorFetch(APIView):
 class TicketValidatorResult(APIView):
 
     def post(self, request):
-        serializer = TicketSerializer(data=request.data)
 
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        for ticket in serializer:
+        for ticket in request.data:
             instance = Ticket.objects.filter(uuid=ticket['uuid']).first()
-            if instance and ticket['scanned'] in [True, 'True']:
+            if instance:
+                print('EXISTS')
                 instance.scanned = True
                 instance.save()
 
-
+        return Response()
 
 
 
