@@ -12,7 +12,6 @@
             <div class="graph-item selected-item" v-for="concert in concerts" :key="concert.id">
               <div class="item-title">
                 <div>{{concert.name}}</div>
-                <!-- <b-button variant="link" @click="getStats(concert.id)">Voir stats</b-button> -->
               </div>
               <div>
                 <div>Période : {{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
@@ -176,10 +175,10 @@ function fetchGraphData(vue) {
       });
       console.debug('statistics', vue.statistics);
       ///////// HARDCOCED DATA FOR PRETTY RESULTS (REMOVE FOR DEMO) /////////
-      visibleConcerts.forEach(c => {
-        vue.statistics[c.id].sold = parseInt(vue.statistics[c.id].total*Math.random());
-        vue.statistics[c.id].scanned = parseInt(vue.statistics[c.id].sold*Math.random());
-      });
+      // visibleConcerts.forEach(c => {
+      //   vue.statistics[c.id].sold = parseInt(vue.statistics[c.id].total*Math.random());
+      //   vue.statistics[c.id].scanned = parseInt(vue.statistics[c.id].sold*Math.random());
+      // });
       ///////////////////////////////////////////////////////////////////////
       resolve([
         {
