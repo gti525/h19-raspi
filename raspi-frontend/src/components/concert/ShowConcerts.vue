@@ -8,12 +8,16 @@
         <div class="left-aligned">
           <div class="concert-name">{{concert.name}}: {{concert.ticket_price}}$</div>
           <div class="concert-time">{{concert.date | moment("YYYY-MM-DD HH:MM")}}</div>
-          <span class="concert-venues">Vendeurs: &nbsp;</span>
+          <span class="concert-venues">Vendeurs:</span>&nbsp;
           <span
             class="concert-sellers"
             v-for="seller in concert.sellers"
             :key="seller"
           >Vente #{{seller}} &nbsp;</span>
+          <span
+            class="concert-sellers"
+            v-if="concert.sellers.length == 0"
+          >Info non disponible</span>
         </div>
       </div>
       <div class="concert-cell">
