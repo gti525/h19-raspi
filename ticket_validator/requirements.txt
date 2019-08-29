@@ -1,4 +1,4 @@
-django==2.1.7
+django==2.1.9
 djangorestframework==3.9
 djangorestframework_simplejwt==3.3
 drf-yasg==1.14
