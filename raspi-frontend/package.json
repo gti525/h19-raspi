@@ -13,7 +13,7 @@
     "chartist": "^0.11.0",
     "chartist-plugin-axistitle": "0.0.4",
     "chartist-to-image": "^1.2.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jquery-datetimepicker": "^2.5.21",
     "js-datepicker": "^4.0.10",
     "sweetalert2": "^8.7.0",
