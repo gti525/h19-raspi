@@ -1,5 +1,5 @@
 django==2.1.9
-djangorestframework==3.9
+djangorestframework==3.11.2
 djangorestframework_simplejwt==3.3
 drf-yasg==1.14
 django-cors-headers==2.4.0
