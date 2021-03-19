@@ -1,5 +1,5 @@
 django==2.1.7
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 mysqlclient==1.4.0
 djangorestframework_simplejwt==3.3
 drf-yasg==1.12.1
