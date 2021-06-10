@@ -1,4 +1,4 @@
-django==2.1.7
+django==2.2.24
 djangorestframework==3.9.1
 mysqlclient==1.4.0
 djangorestframework_simplejwt==3.3
